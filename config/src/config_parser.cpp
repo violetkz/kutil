@@ -26,8 +26,8 @@
  * whitespace : [\t \v\f]+
  * comment:   : #[^\n]*$
  */
-conf_parser::conf_parser(std::ifstream& f)
-    :lex_(f),
+conf_parser::conf_parser(std::ifstream& fs, stmt_collector& sc)
+    :lex_(fs), stmt_collector_(sc),
     look_() {
 }
 
@@ -77,10 +77,11 @@ void conf_parser::keyval(){
 }
 
 void conf_parser::comment(){
-    comment_stmt *c = new comment_stmt(look_);   
-    stmt_list.push_back(c);
+    //comment_stmt *c = new comment_stmt(look_);   
+    //stmt_list_.push_back(c);
     move();
     match('\n');
+    stmt_collector_.add_m_stmt(look_);
 }
 
 void conf_parser::parse(){
@@ -157,12 +158,14 @@ void conf_parser::save(){
 */
 
 conf_parser::~conf_parser(){
+    /*
     std::list<stmt *> ::iterator it;
     for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
         //(*it)->str(std::cout);
         safe_del(*it);
     }
     fs_.close();
+    */
 }
 
 #ifdef _DEBUG_PARSER

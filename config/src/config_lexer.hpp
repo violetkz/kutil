@@ -14,7 +14,7 @@ struct status {
 };
 class lexer{
     public:
-        lexer(std::fstream& fio);
+        lexer(std::ifstream& fio);
         token scan();
     private:
         inline void scan_word(std::string& s);
@@ -24,7 +24,7 @@ class lexer{
         inline void skip_white();
 
         struct status       stat_;
-        std::fstream&      io;
+        std::ifstream&      io;
 };
 
 #endif //~CONFIG_LEX_HPP

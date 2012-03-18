@@ -39,7 +39,7 @@ bool strcmp_ncase(const std::string& _f1, const std::string& _f2)
     return _f1.compare(_f2) == 0;    
 }
 
-lexer::lexer(std::fstream& fio):io(fio) {
+lexer::lexer(std::ifstream& fio):io(fio) {
     memset(&stat_, 0x00, sizeof(stat_));
 }
 

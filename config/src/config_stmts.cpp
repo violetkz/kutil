@@ -1,5 +1,8 @@
 
 #include "config_stmts.hpp"
+#include "config_lexer.hpp"
+#include <fstream>
+#include <iostream>
 
 
 /*
@@ -16,13 +19,14 @@ void comment_stmt::print(std::ostream& o){
 }
 #endif
 
-virtual void comment_stmt::str(std::ostream& o){
+void comment_stmt::str(std::ostream& o){
     o << comment_.value()  << std::endl;
 }
+
 /*
  * keyvalue_stmt
  */
-keyvalue_stmt(token& key, token& val):
+keyvalue_stmt::keyvalue_stmt(token& key, token& val):
     key_(key),value_(val){
 }
 
@@ -74,12 +78,28 @@ void stmt_collector::add_m_stmt(token& t) {
 }
 
 void stmt_collector::add_kv_stmt(token& key,token& value){
-    keyvalue_stmt* stmt = new keyvalue_stmt(t);
+    keyvalue_stmt* stmt = new keyvalue_stmt(key, value);
     stmt_list.push_back(stmt);
     keyval_map.insert(std::pair<std::string, token>(key.value(), value));
 }
 
-void stmt_collector::add_kvm_stmt(token& key,token& value){
-    keyvalue_comment_stmt* stmt = new keyvalue_comment_stmt(t);
+void stmt_collector::add_kvm_stmt(token& key,token& value, token& subcomment){
+    keyvalue_comment_stmt* stmt = new keyvalue_comment_stmt(key, value, subcomment);
     keyval_map.insert(std::pair<std::string, token>(key.value(), value));
+}
+
+void stmt_collector::print(){
+    std::list<stmt *> ::iterator it;
+    for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
+        //(*it)->str(fs_);
+        (*it)->str(std::cout);
+    }
+}
+
+stmt_collector::~stmt_collector(){
+    std::list<stmt *> ::iterator it;
+    for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
+        //(*it)->str(std::cout);
+//        safe_del(*it);
+    }
 }

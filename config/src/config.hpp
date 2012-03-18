@@ -4,14 +4,21 @@
 
 #include <string>
 #include "config_parser.hpp"
+#include "config_stmts.hpp"
+
 class config {
 public:
+    config(const char *file);
     void parse();
-
+    void print();
     
 private:
-    std::string config_file_path;
-    conf_parser parser_;
+    config(const config&){}
+
+private:
+    std::string         config_file_path_;
+    //conf_parser         parser_;
+    stmt_collector      stmt_collector_;    
 };
 
 #endif

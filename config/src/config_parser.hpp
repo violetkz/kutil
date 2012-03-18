@@ -7,7 +7,7 @@
 #include <map>
 #include "config_token.hpp"
 #include "config_lexer.hpp"
-#include "stmt_collector.hpp"
+#include "config_stmts.hpp"
 
 
 class conf_parser {
