@@ -8,7 +8,6 @@ class config {
 public:
     void parse();
 
-        
     
 private:
     std::string config_file_path;
