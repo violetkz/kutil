@@ -13,7 +13,7 @@ comment_stmt::comment_stmt(token& comment)
     :comment_(comment) {
 }
 
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
 void comment_stmt::print(std::ostream& o){
     o << comment_ ;
 }
@@ -30,7 +30,7 @@ keyvalue_stmt::keyvalue_stmt(token& key, token& val):
     key_(key),value_(val){
 }
 
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
 void keyvalue_stmt::print(std::ostream& o){
     o << key_ ;
     o << value_;
@@ -49,7 +49,7 @@ keyvalue_comment_stmt::keyvalue_comment_stmt(token& key, token& val, token& sub)
     :key_(key),value_(val),subcomment_(sub){
 }
 
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
 void keyvalue_comment_stmt::print(std::ostream& o){
     o << key_ ;
     o << value_;
@@ -62,7 +62,7 @@ void keyvalue_comment_stmt::str(std::ostream& o){
     o << value_.value()  << std::endl;
 }
 
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
 std::ostream& operator << (std::ostream& o, stmt& sm){
     sm.print(o);
     return o; 
@@ -85,6 +85,7 @@ void stmt_collector::add_kv_stmt(token& key,token& value){
 
 void stmt_collector::add_kvm_stmt(token& key,token& value, token& subcomment){
     keyvalue_comment_stmt* stmt = new keyvalue_comment_stmt(key, value, subcomment);
+    stmt_list.push_back(stmt);
     keyval_map.insert(std::pair<std::string, token>(key.value(), value));
 }
 

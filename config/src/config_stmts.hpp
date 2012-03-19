@@ -15,7 +15,7 @@ class stmt{
         int get_type();
         virtual void str(std::ostream& o){}
         virtual ~stmt(){}
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
         virtual void print(std::ostream& o){}
 #endif
 };
@@ -24,7 +24,7 @@ class stmt{
 class comment_stmt: public stmt{
     public:
         comment_stmt(token& comment);
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);
@@ -37,7 +37,7 @@ class comment_stmt: public stmt{
 class keyvalue_stmt: public stmt{
     public:
         keyvalue_stmt(token& key, token& val);
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);
@@ -51,7 +51,7 @@ class keyvalue_stmt: public stmt{
 class keyvalue_comment_stmt: public stmt{
     public:
         keyvalue_comment_stmt(token& key, token& val, token& sub);
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);

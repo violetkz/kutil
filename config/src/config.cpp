@@ -16,9 +16,8 @@ void config::parse(){
     cp.parse();
 }
 
-#ifdef _DEBUG_CONFIG
-
-config::print(){
+#ifdef _DEBUG
+void config::print(){
     stmt_collector_.print();
 }
 #endif

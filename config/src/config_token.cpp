@@ -3,7 +3,7 @@
 #include  <iostream>
 
 token::val_ptr::val_ptr(const std::string& v)
-        :val_(v),ref(0) {
+        :ref(0), val_(v){
 }
 token::val_ptr::val_ptr(int tag) :ref(0) {
         switch (tag){
@@ -56,6 +56,8 @@ token& token::operator = (const token& t){
     val_ptr_ = t.val_ptr_;
     
     ++(t.val_ptr_->ref);
+    
+    return *this;
 }
 
 std::ostream& operator << (std::ostream& out, const token& t){

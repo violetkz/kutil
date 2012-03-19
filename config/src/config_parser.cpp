@@ -27,8 +27,7 @@
  * comment:   : #[^\n]*$
  */
 conf_parser::conf_parser(std::ifstream& fs, stmt_collector& sc)
-    :lex_(fs), stmt_collector_(sc),
-    look_() {
+    :lex_(fs), look_(),stmt_collector_(sc) {
 }
 
 void conf_parser::move(){
@@ -61,7 +60,7 @@ void conf_parser::keyval(){
             ::exit(-1);
     }
     move();
-    stmt *stmt = NULL;
+    //stmt *stmt = NULL;
     if (look_.type_ == T_COMMENT){
         token c=look_;
         //stmt = new keyvalue_comment_stmt(key, value, look_);
@@ -168,7 +167,7 @@ conf_parser::~conf_parser(){
     */
 }
 
-#ifdef _DEBUG_PARSER
+#ifdef _DEBUG
 std::ostream& operator << (std::ostream& o, stmt& sm){
     sm.print(o);
     return o; 
