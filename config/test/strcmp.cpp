@@ -27,8 +27,8 @@ bool strcmp_ncase(const std::string& _f1, const std::string& _f2)
     if (_f1 == _f2){
         std::cout<< __func__ << "f1==f2: ==" << std::endl;
     }
-    std::string _f1_lower;
-    std::string _f2_lower;
+    std::string _f1_lower('0x00', len); 
+    std::string _f2_lower('0x00', len);
 
     //_f1_lower.reserve(len);
     //_f2_lower.reserve(len);
