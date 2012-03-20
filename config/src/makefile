@@ -6,7 +6,7 @@ CXXFLAGS += -Wall -g -D_DEBUG
 
 
 $configlib:$(OBJ)
-	ar rvl $(configlib) $(OBJ)
+	@ar r $(configlib) $(OBJ)
 	@ranlib $(configlib)
 
 $(OBJ):$(SRC:.cpp=.hpp)

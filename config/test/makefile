@@ -1,4 +1,12 @@
 
+.PHONY:all
+all: test_config strcmp test_lexer
+
+test_lexer: test_lexer.cpp ../src/config.a
+	g++ -g -o test_lexer test_lexer.cpp -I../src ../src/config.a -D_DEBUG
+
+strcmp: strcmp.cpp ../src/config.a
+	g++ -g strcmp.cpp -o strcmp
 
 test_config: config_test.cpp ../src/config.a
 	g++ -o test_config config_test.cpp -I../src ../src/config.a -D_DEBUG
@@ -6,4 +14,4 @@ test_config: config_test.cpp ../src/config.a
 .PHONY:clean
 
 clean:
-	rm -f test_config
+	rm -f test_config strcmp

@@ -21,22 +21,15 @@
 #include "config_lexer.hpp"
 
 // compare std::string without case.
-bool strcmp_ncase(const std::string& _f1, const std::string& _f2)
+bool strcmp_ncase(const std::string& a, const std::string& b)
 {   
-    size_t len = _f1.size();
-    if ( len != _f2.size())
+    unsigned int sz = a.size();
+    if (b.size() != sz)
         return false;
-
-    std::string _f1_lower;
-    std::string _f2_lower;
-
-    //_f1_lower.reserve(len);
-    //_f2_lower.reserve(len);
-
-    std::transform(_f1.begin(), _f1.end(), _f1_lower.begin(), ::tolower);
-    std::transform(_f2.begin(), _f2.end(), _f2_lower.begin(), ::tolower);
-
-    return _f1.compare(_f2) == 0;    
+    for (unsigned int i = 0; i < sz; ++i)
+        if (tolower(a[i]) != tolower(b[i]))
+            return false;
+    return true;
 }
 
 lexer::lexer(std::ifstream& fio):io(fio) {

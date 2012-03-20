@@ -62,16 +62,18 @@ token& token::operator = (const token& t){
 
 std::ostream& operator << (std::ostream& out, const token& t){
     
-#if 0
     if (t.type_ == -1)
         out << '[' << "EOF" << "]:" ;
     else out << '[' << static_cast<char>(t.type_) << "]:" ;
   
-    out << '[' << t.value() << ']' << std::endl;
-#endif
-    
+    //out << '[' << t.value() << ']' << std::endl;
     out << t.val_ptr_->ref << ":" ;
     out << t.val_ptr_->val_ << std::endl; ;
+    
+#if 0
+    out << t.val_ptr_->ref << ":" ;
+    out << t.val_ptr_->val_ << std::endl; ;
+#endif
     return out;
 }
 

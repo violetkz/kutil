@@ -78,20 +78,13 @@ void conf_parser::keyval(){
 void conf_parser::comment(){
     //comment_stmt *c = new comment_stmt(look_);   
     //stmt_list_.push_back(c);
+    token c = look_;
     move();
     match('\n');
-    stmt_collector_.add_m_stmt(look_);
+    stmt_collector_.add_m_stmt(c);
 }
 
 void conf_parser::parse(){
-    /*
-    if (fs_.bad()){
-        //FIXME: handle error.
-        fprintf(stderr,"open file failed.");
-        return;
-    }
-    */
-
     move();
     while (look_.type_ != T_EOF){
         switch (look_.type_){
