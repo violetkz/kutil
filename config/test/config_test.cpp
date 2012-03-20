@@ -15,6 +15,7 @@ int main(int argv, char * args[]){
     //f2.set("number_key1",2333);
     //f2.save();
     
+    f.print();
 
     return 0;
 }

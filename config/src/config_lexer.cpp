@@ -30,8 +30,8 @@ bool strcmp_ncase(const std::string& _f1, const std::string& _f2)
     std::string _f1_lower;
     std::string _f2_lower;
 
-    _f1_lower.reserve(len);
-    _f2_lower.reserve(len);
+    //_f1_lower.reserve(len);
+    //_f2_lower.reserve(len);
 
     std::transform(_f1.begin(), _f1.end(), _f1_lower.begin(), ::tolower);
     std::transform(_f2.begin(), _f2.end(), _f2_lower.begin(), ::tolower);
@@ -48,6 +48,7 @@ void lexer::scan_word(std::string& s){
         s.push_back(stat_.c);
         stat_.c = io.get();
     }while(isalpha(stat_.c) || isalnum(stat_.c) || stat_.c == '_' );
+    io.putback(stat_.c); 
 }
 
 void lexer::scan_number(std::string& s){
@@ -55,6 +56,7 @@ void lexer::scan_number(std::string& s){
         s.push_back(stat_.c);
         stat_.c = io.get();
     } while(isalnum(stat_.c));
+    io.putback(stat_.c); 
 }
 
 void lexer::scan_string(std::string& s){
@@ -84,12 +86,15 @@ void lexer::scan_comment(std::string& s){
 }
 
 void lexer::skip_white(){
+    stat_.c = io.get();
     while (!io.eof()){
-        stat_.c = io.get();
         if (stat_.c ==' ' || stat_.c == '\t' || stat_.c == '\r') {
+            stat_.c = io.get();
             continue;
         }
-        else break;
+        else{ //io.putback(stat_.c);
+            break;
+        }
     }
 }
 

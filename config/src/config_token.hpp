@@ -1,6 +1,6 @@
 
-#ifndef config_token_hpp
-#define config_token_hpp
+#ifndef CONFIG_TOKEN_HPP
+#define CONFIG_TOKEN_HPP
 
 #include <string>
 

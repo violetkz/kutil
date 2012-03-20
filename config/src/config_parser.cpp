@@ -168,8 +168,10 @@ conf_parser::~conf_parser(){
 }
 
 #ifdef _DEBUG
+#if 0
 std::ostream& operator << (std::ostream& o, stmt& sm){
     sm.print(o);
     return o; 
 }
+#endif
 #endif
