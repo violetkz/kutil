@@ -97,6 +97,20 @@ void stmt_collector::print(){
     }
 }
 
+token stmt_collector::find(const std::string& key){
+    token t;
+    keyval_map_T::const_iterator it;   
+    it = keyval_map.find(key);
+    if (it != keyval_map.end()){
+        t = keyval_map[key];
+    }
+    else{
+        //TODO:
+        //throw key_not_found exception.
+        //return *(new std::string("KEY WAS NOT FOUND"));
+    }
+    return t;
+}
 stmt_collector::~stmt_collector(){
     std::list<stmt *> ::iterator it;
     for(it = stmt_list.begin(); it != stmt_list.end(); ++it){

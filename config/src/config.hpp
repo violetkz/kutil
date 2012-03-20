@@ -12,6 +12,10 @@ public:
     void parse();
     void print();
     
+    std::string get(const std::string& key);
+    int         get_int(const std::string& key);
+    bool        get_bool(const std::string& key);
+
 private:
     config(const config&){}
 

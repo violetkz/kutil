@@ -1,5 +1,8 @@
 
 #include "config.hpp"
+#include <iostream>
+
+using namespace std;
 
 int main(int argv, char * args[]){
     
@@ -16,6 +19,12 @@ int main(int argv, char * args[]){
     //f2.save();
     
     f.print();
-
+    
+    cout << f.get("test1") << endl;
+    cout << f.get("test2") << endl;
+    cout << f.get("test3") << endl;
+    
+    cout << f.get_int("test2") << endl;
+    cout << f.get_bool("test4") << endl;
     return 0;
 }

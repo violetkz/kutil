@@ -1,5 +1,8 @@
 
+#include "config_token.hpp"
+#include "config_lexer.hpp"
 #include "config.hpp"
+#include <sstream>
 
 config::config(const char *file)
     :config_file_path_(file),stmt_collector_()
@@ -21,3 +24,71 @@ void config::print(){
     stmt_collector_.print();
 }
 #endif
+#if 0
+    std::string get(const std::string& key);
+    int         get(const std::string& key);
+    bool        get(const std::string& key);
+#endif
+
+
+std::string config::get(const std::string& key){
+
+    token t = stmt_collector_.find(key);
+    return t.value();
+}
+
+int config::get_int(const std::string& key){
+    token t =  stmt_collector_.find(key);
+    int i=0xFFFFFF;
+    if (t.type_ == T_VALUE_NUMBER ){
+        std::istringstream iss(t.value());
+        iss >> i;
+    }
+    return i;
+}
+
+bool config::get_bool(const std::string& key){
+    token t = stmt_collector_.find(key);
+    bool f = false;
+    if (t.type_ == T_VALUE_BOOLEAN ){
+       if (strcmp_ncase(t.value(), "on") || strcmp_ncase(t.value(), "true"))
+           f = true;
+    }
+    return f;
+}
+
+/*
+void conf_parser::set(const std::string& key, const std::string& value){
+    
+    token t = token(T_VALUE_STRING,value);
+    keyval_map.insert(std::pair<std::string, token>(key, t));
+
+}
+
+void conf_parser::set(const std::string& key, const char * value){
+    
+    std::string v(value);
+    token t = token(T_VALUE_STRING,v);
+    keyval_map.insert(std::pair<std::string, token>(key, t));
+
+}
+
+void conf_parser::set(const std::string& key, bool flag){
+    
+    std::string f = flag ? "true" : "false";
+
+    token t = token(T_VALUE_STRING,f);
+    keyval_map.insert(std::pair<std::string, token>(key, t));
+
+}
+
+void conf_parser::save(){
+    //fs_.seekp(std::ios_base::beg);
+    std::list<stmt *> ::iterator it;
+    for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
+        //(*it)->str(fs_);
+        (*it)->str(std::cout);
+    }
+//    fs_.flush();
+}
+*/
