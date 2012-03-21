@@ -98,56 +98,6 @@ void conf_parser::parse(){
         }
     }
 };
-/*
-std::string& conf_parser::get(const std::string& key){
-
-    keyval_map_T::const_iterator it;   
-    it = keyval_map.find(key);
-    if (it != keyval_map.end()){
-        token t = keyval_map[key];
-        return t.value();
-    }
-    else{
-        //TODO:
-        //throw key_not_found exception.
-        return *(new std::string("KEY WAS NOT FOUND"));
-    }
-}
-
-void conf_parser::set(const std::string& key, const std::string& value){
-    
-    token t = token(T_VALUE_STRING,value);
-    keyval_map.insert(std::pair<std::string, token>(key, t));
-
-}
-
-void conf_parser::set(const std::string& key, const char * value){
-    
-    std::string v(value);
-    token t = token(T_VALUE_STRING,v);
-    keyval_map.insert(std::pair<std::string, token>(key, t));
-
-}
-
-void conf_parser::set(const std::string& key, bool flag){
-    
-    std::string f = flag ? "true" : "false";
-
-    token t = token(T_VALUE_STRING,f);
-    keyval_map.insert(std::pair<std::string, token>(key, t));
-
-}
-
-void conf_parser::save(){
-    //fs_.seekp(std::ios_base::beg);
-    std::list<stmt *> ::iterator it;
-    for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
-        //(*it)->str(fs_);
-        (*it)->str(std::cout);
-    }
-//    fs_.flush();
-}
-*/
 
 conf_parser::~conf_parser(){
     /*

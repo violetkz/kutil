@@ -71,6 +71,7 @@ class stmt_collector {
         void add_kv_stmt(token& key,token& value);
         void add_kvm_stmt(token& key,token& value,token& subcomment);
 
+        token find(const std::string& key);
         void print();
 
         ~stmt_collector();

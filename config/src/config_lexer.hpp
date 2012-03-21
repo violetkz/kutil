@@ -27,4 +27,5 @@ class lexer{
         std::ifstream&      io;
 };
 
+bool strcmp_ncase(const std::string& a, const std::string& b);
 #endif //~CONFIG_LEX_HPP

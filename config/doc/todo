@@ -7,6 +7,24 @@
     f.add_separate_line();                   => output a separate line. i.e: '-'*20
     ...
 5. fix print() bug.
+6. fix scan_number to support float number and signed char (+/-)
+7. add stmt : key delimiter word 
+       word : [A-Za-z.-+-]??
+8. add base64 support.
+9. add mutil-line value support.
+       key = "line1"
+             "line2"
+             "line3"
+       
+      Cpp:
+        val = f.get(key)
+        cout << val;
+        //output:
+        //     "line1 line2 line3"
+10. add array support.
+       key = ["sttr", "y"]   OR
+       key = [2,4,8,10]      
+
     
 ==> COMPELETED <==
 1. write the makefile to testing codes.  
