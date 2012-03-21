@@ -59,7 +59,8 @@ void keyvalue_comment_stmt::print(std::ostream& o){
 
 void keyvalue_comment_stmt::str(std::ostream& o){
     o << key_.value() << " = ";
-    o << value_.value()  << std::endl;
+    o << value_.value() << " " ;
+    o << subcomment_ << std::endl;
 }
 
 #ifdef _DEBUG
@@ -101,6 +102,6 @@ stmt_collector::~stmt_collector(){
     std::list<stmt *> ::iterator it;
     for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
         //(*it)->str(std::cout);
-//        safe_del(*it);
+        //safe_del(*it);
     }
 }

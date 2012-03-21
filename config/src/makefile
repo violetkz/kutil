@@ -9,7 +9,7 @@ $configlib:$(OBJ)
 	@ar r $(configlib) $(OBJ)
 	@ranlib $(configlib)
 
-$(OBJ):$(SRC:.cpp=.hpp)
+$(OBJ):$(SRC:.cpp=.hpp) $(SRC)
 
 .PYONY: clean
 clean:

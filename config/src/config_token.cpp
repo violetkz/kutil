@@ -13,7 +13,6 @@ token::val_ptr::val_ptr(int tag) :ref(0) {
                         break;
             default:
                val_ = std::string(1, static_cast<char>(tag));
-
         }
 }
 
@@ -64,11 +63,15 @@ std::ostream& operator << (std::ostream& out, const token& t){
     
     if (t.type_ == -1)
         out << '[' << "EOF" << "]:" ;
+    else if (t.type_ == '\n')
+        out << '[' << "LF"  << "]";
     else out << '[' << static_cast<char>(t.type_) << "]:" ;
   
     //out << '[' << t.value() << ']' << std::endl;
     out << t.val_ptr_->ref << ":" ;
-    out << t.val_ptr_->val_ << std::endl; ;
+    if (t.val_ptr_->val_.size() > 1) {
+        out << t.val_ptr_->val_ << std::endl; ;
+    }
     
 #if 0
     out << t.val_ptr_->ref << ":" ;
