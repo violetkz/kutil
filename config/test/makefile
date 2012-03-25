@@ -14,4 +14,4 @@ test_config: config_test.cpp ../src/config.a
 .PHONY:clean
 
 clean:
-	rm -f test_config strcmp
+	rm -f test_config strcmp test_lexer
