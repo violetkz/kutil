@@ -58,9 +58,9 @@ void keyvalue_comment_stmt::print(std::ostream& o){
 #endif
 
 void keyvalue_comment_stmt::str(std::ostream& o){
-    o << key_.value() << " = ";
-    o << value_.value() << " " ;
-    o << subcomment_.value() << std::endl;
+    o << key_.value() << " = " << value_.value() ;
+    o << " " << subcomment_.value();
+    o << std::endl;
 }
 
 #ifdef _DEBUG
