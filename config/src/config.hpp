@@ -15,6 +15,10 @@ public:
     std::string get(const std::string& key);
     int         get_int(const std::string& key);
     bool        get_bool(const std::string& key);
+    void        set(const std::string& key, const std::string& value, const std::string& subcomment = "");
+    void        set(const std::string& key, const char * value);
+    void        set(const std::string& key, bool flag);
+    void        set_comment(const std::string& comment);
 
 private:
     config(const config&){}

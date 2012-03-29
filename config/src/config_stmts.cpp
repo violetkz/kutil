@@ -60,7 +60,7 @@ void keyvalue_comment_stmt::print(std::ostream& o){
 void keyvalue_comment_stmt::str(std::ostream& o){
     o << key_.value() << " = ";
     o << value_.value() << " " ;
-    o << subcomment_ << std::endl;
+    o << subcomment_.value() << std::endl;
 }
 
 #ifdef _DEBUG

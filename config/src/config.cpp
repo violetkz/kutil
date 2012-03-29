@@ -57,6 +57,35 @@ bool config::get_bool(const std::string& key){
     return f;
 }
 
+void config::set(const std::string& key, const std::string& value, const std::string& subcomment ){
+
+    token k = token(T_KEY ,key);
+    token v = token(T_VALUE_STRING,value);
+    if (subcomment == "") {
+        stmt_collector_.add_kv_stmt(k,v);
+    }
+    else {
+        token m = token(T_COMMENT,subcomment);
+        stmt_collector_.add_kvm_stmt(k,v,m);
+    }
+}
+
+void config::set(const std::string& key, const char * value){
+    std::string v(value);
+    set(key, v, "");
+}
+
+void config::set(const std::string& key, bool flag){
+    
+    std::string f = flag ? "true" : "false";
+    set(key, f, "");
+}
+
+void config::set_comment(const std::string& comment){
+    token m = token(T_COMMENT,comment);
+    stmt_collector_.add_m_stmt(m);
+}
+
 /*
 void conf_parser::set(const std::string& key, const std::string& value){
     
