@@ -46,7 +46,7 @@ std::string token::str(){
     std::string s;
     switch (type_){
         case T_VALUE_STRING:
-            //XXX: there is more well way do do this.
+            //XXX: replace the following code with better way
             s += '"';
             s += val_ptr_->val_;
             s += '"';
