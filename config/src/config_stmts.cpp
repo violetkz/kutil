@@ -15,12 +15,12 @@ comment_stmt::comment_stmt(token& comment)
 
 #ifdef _DEBUG
 void comment_stmt::print(std::ostream& o){
-    o << comment_ ;
+    o <<"#" << comment_ ;
 }
 #endif
 
 void comment_stmt::str(std::ostream& o){
-    o << comment_.value()  << std::endl;
+    o << comment_.str()  << std::endl;
 }
 
 /*
@@ -38,8 +38,8 @@ void keyvalue_stmt::print(std::ostream& o){
 #endif
 
 void keyvalue_stmt::str(std::ostream& o){
-    o << key_.value() << " = ";
-    o << value_.value()  << std::endl;
+    o << key_.str() << " = ";
+    o << value_.str()  << std::endl;
 }
 
 /*
@@ -58,8 +58,8 @@ void keyvalue_comment_stmt::print(std::ostream& o){
 #endif
 
 void keyvalue_comment_stmt::str(std::ostream& o){
-    o << key_.value() << " = " << value_.value() ;
-    o << " " << subcomment_.value();
+    o << key_.str() << " = " << value_.str() ;
+    o << " " << subcomment_.str();
     o << std::endl;
 }
 
@@ -90,11 +90,12 @@ void stmt_collector::add_kvm_stmt(token& key,token& value, token& subcomment){
     keyval_map.insert(std::pair<std::string, token>(key.value(), value));
 }
 
-void stmt_collector::print(){
+void stmt_collector::print(std::ostream& o){
     std::list<stmt *> ::iterator it;
     for(it = stmt_list.begin(); it != stmt_list.end(); ++it){
         //(*it)->str(fs_);
-        (*it)->str(std::cout);
+        //(*it)->str(std::cout);
+        (*it)->str(o);
     }
 }
 

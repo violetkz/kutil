@@ -1,12 +1,11 @@
 
-3. write get/set functions in class `config'.
+3. re-write get/set functions in class `config'.
 4. re-design save func.
     config f;
     f.add_newline();                         => ouput a \n to file.
     f.add_title();                           => output the title. i.e "#_______SIMPLE_CONFIGFILE_____#
     f.add_separate_line();                   => output a separate line. i.e: '-'*20
     ...
-5. fix print() bug.
 6. fix scan_number to support float number and signed char (+/-)
 7. add stmt : key delimiter word 
        word : [A-Za-z.-+-]??
@@ -25,8 +24,11 @@
        key = ["sttr", "y"]   OR
        key = [2,4,8,10]      
 
+11. clean and optimaize code.
+
     
 ==> COMPELETED <==
 1. write the makefile to testing codes.  
 2. write the makefile to src.            
+5. fix print() bug.
 

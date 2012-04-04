@@ -20,8 +20,8 @@ void config::parse(){
 }
 
 #ifdef _DEBUG
-void config::print(){
-    stmt_collector_.print();
+void config::print(std::ostream& o){
+    stmt_collector_.print(o);
 }
 #endif
 #if 0
@@ -84,6 +84,11 @@ void config::set(const std::string& key, bool flag){
 void config::set_comment(const std::string& comment){
     token m = token(T_COMMENT,comment);
     stmt_collector_.add_m_stmt(m);
+}
+
+void config::save() {
+    std::ofstream f(config_file_path_.c_str());
+    stmt_collector_.print(f);
 }
 
 /*

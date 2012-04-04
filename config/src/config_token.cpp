@@ -41,6 +41,26 @@ token::token(const token& t){
     val_ptr_-> ref += 1;
 }
 
+std::string token::str(){
+
+    std::string s;
+    switch (type_){
+        case T_VALUE_STRING:
+            //XXX: there is more well way do do this.
+            s += '"';
+            s += val_ptr_->val_;
+            s += '"';
+            break;
+        case T_COMMENT:
+            s += '#';
+            s += val_ptr_->val_;
+            break;
+        default:
+            return val_ptr_->val_;
+    }
+    return s;
+}
+
 token& token::operator = (const token& t){
     if (this->val_ptr_ == t.val_ptr_){
         return *this;

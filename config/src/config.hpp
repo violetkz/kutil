@@ -10,7 +10,9 @@ class config {
 public:
     config(const char *file);
     void parse();
-    void print();
+#ifdef _DEBUG
+    void print(std::ostream& o);
+#endif
     
     std::string get(const std::string& key);
     int         get_int(const std::string& key);
@@ -19,6 +21,7 @@ public:
     void        set(const std::string& key, const char * value);
     void        set(const std::string& key, bool flag);
     void        set_comment(const std::string& comment);
+    void        save();
 
 private:
     config(const config&){}

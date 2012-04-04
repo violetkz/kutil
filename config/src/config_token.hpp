@@ -29,9 +29,10 @@ public:
     std::string& value()const{
         return val_ptr_->val_;
     }
-    std::string  str() const{
+    std::string  str(); /* const{
         return val_ptr_->val_;
     }
+    */
     int         type_;
 
     friend std::ostream& operator << (std::ostream& out, const token& t);
