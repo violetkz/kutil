@@ -79,15 +79,43 @@ void stmt_collector::add_m_stmt(token& t) {
 }
 
 void stmt_collector::add_kv_stmt(token& key,token& value){
+    it = keyval_map.find(key);
+    if (it != keyval_map.end()){
+    
     keyvalue_stmt* stmt = new keyvalue_stmt(key, value);
     stmt_list.push_back(stmt);
+#if 0
+    std::cout << "k:[" << key.value() <<"]"<< std::endl;
+    std::cout << "v:" << value << std::endl;
+#endif
     keyval_map.insert(std::pair<std::string, token>(key.value(), value));
 }
 
-void stmt_collector::add_kvm_stmt(token& key,token& value, token& subcomment){
+//XXX: bugs !!!
+//    double insert same key-value.
+void stmt_collector::add_kvm_stmt(token& key,token value, token& subcomment){
     keyvalue_comment_stmt* stmt = new keyvalue_comment_stmt(key, value, subcomment);
     stmt_list.push_back(stmt);
-    keyval_map.insert(std::pair<std::string, token>(key.value(), value));
+#if 0
+    std::cout << "k:[" << key.value() <<"]"<< std::endl;
+    std::cout << "v:" << value << std::endl;
+    keyval_map_T::const_iterator it;   
+    for (it = keyval_map.begin(); it != keyval_map.end(); ++it){
+        std::cout << it->first << "=>" << it->second << std::endl;
+    }
+#endif
+    std::pair<keyval_map_T::const_iterator, bool> ret;
+    ret = keyval_map.insert(std::pair<std::string, token>(key.value(), value));
+    if (!ret.second){
+        std::cout << "insert failed \n" ;
+    }
+#if 0
+    //keyval_map_T::const_iterator it;   
+    std::cout << "after\n";
+    for (it = keyval_map.begin(); it != keyval_map.end(); ++it){
+        std::cout << it->first << "=>" << it->second << std::endl;
+    }
+#endif
 }
 
 void stmt_collector::print(std::ostream& o){
@@ -97,6 +125,16 @@ void stmt_collector::print(std::ostream& o){
         //(*it)->str(std::cout);
         (*it)->str(o);
     }
+}
+
+bool  stmt_collector::exist(const std::string& key){
+    bool re = false;
+    keyval_map_T::const_iterator it;   
+    it = keyval_map.find(key);
+    if (it != keyval_map.end()){
+       re = true; 
+    }
+    return re;
 }
 
 token stmt_collector::find(const std::string& key){
