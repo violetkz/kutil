@@ -12,8 +12,9 @@
 class stmt{
     public:
         enum STMT_TYPE {COMMENT, ITEM};
-        int get_type();
+        virtual int get_type() { return COMMENT; }
         virtual void str(std::ostream& o){}
+        virtual token get_value() = 0;
         virtual ~stmt(){}
 #ifdef _DEBUG
         virtual void print(std::ostream& o){}
@@ -28,6 +29,11 @@ class comment_stmt: public stmt{
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);
+
+        virtual token get_value() {
+            return comment_;
+        }
+        virtual int get_type() { return COMMENT; }
         virtual ~comment_stmt(){}
     private:
         token comment_;
@@ -41,6 +47,10 @@ class keyvalue_stmt: public stmt{
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);
+        virtual int get_type() { return ITEM; }
+        virtual token get_value() {
+            return value_;
+        }
         virtual ~keyvalue_stmt(){}
     private:
         token key_;
@@ -55,6 +65,10 @@ class keyvalue_comment_stmt: public stmt{
         virtual void print(std::ostream& o);
 #endif
         virtual void str(std::ostream& o);
+        virtual int get_type() { return ITEM; }
+        virtual token get_value() {
+            return value_;
+        }
         virtual ~keyvalue_comment_stmt(){}
     private:
         token key_;
@@ -71,6 +85,7 @@ class stmt_collector {
         void add_kv_stmt(token& key,token& value);
         void add_kvm_stmt(token& key,token value,token& subcomment);
         
+        bool  exist(const std::string& key);
         token find(const std::string& key);
         void print(std::ostream& o);
 
@@ -78,7 +93,8 @@ class stmt_collector {
 
     private:
         std::list<stmt *> stmt_list;
-        typedef std::map<const std::string, token>  keyval_map_T;
+        typedef std::map<const std::string, stmt*>      keyval_map_T;
+        typedef std::pair<const std::string, stmt*>     map_item;
         keyval_map_T keyval_map;
 };
 #endif

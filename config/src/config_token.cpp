@@ -5,6 +5,7 @@
 token::val_ptr::val_ptr(const std::string& v)
         :ref(0), val_(v){
 }
+
 token::val_ptr::val_ptr(int tag) :ref(0) {
         switch (tag){
             case 0:     val_ = "";
