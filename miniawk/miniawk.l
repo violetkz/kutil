@@ -47,8 +47,8 @@ enum tokent {
                 puts(action);
                 return T_ACTION;
             }
-"{"         { puts("{"); return '{'; }
-"}"         { puts("}"); return '}'; }
+"{"         { puts("{"); return T_LEFT_BRACE; }
+"}"         { puts("}"); return T_RIGHT_BRACE; }
 .           ECHO;
 <<EOF>>     { yyterminate(); }
 %%
