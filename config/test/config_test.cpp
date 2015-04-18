@@ -28,11 +28,9 @@ int main(int argv, char * args[]){
     // cout << f.get_bool("test4") << endl;
     //f.set("test2","reset test", "#reset test");
     //   cout << f.get("test2") << endl;
-#if 0
     f.set("key__1", "value");
     f.set("key__1", "value2");
     f.set("key__1", "value2");
-#endif
     f.save();
     return 0;
 }
