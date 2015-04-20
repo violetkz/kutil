@@ -1,26 +1,39 @@
-
 %{
 #include "ns_def.h"
 %}
 
+%union {
+    char* strval;
+    int   func; 
+    struct node* ast;
+};
+
+%token <strval> STR REGEXSTR IDENTIFIER
+%type <ast> stmt  pattern action func_exp param_list
+%start stmt
 %%
 
-smst: /* empty */ {$$ = NULL;}
-    | pattern '{' action '}' { $$ = node_new(smst_node, $1, $2); }
+stmt: /* empty */ {$$ = NULL;}
+    | pattern '{' action '}' { $$ = new stmt_node($1, $3); }
     ;
 
 pattern: /* empty */ {$$ = NULL;}
-    | regexstr  {$$ = $1;}
-    | str       {$$ = $1;}
+    | REGEXSTR  {$$ = $1;}
+    | STR       {$$ = $1;}
+    ;
 
 action:  /* empty */ {$$ = NULL;}
     | func_exp  {$$ = $1; }
+    ;
 
-func_exp:  func_name '(' param_list ')'  { $$ = builtin_func_node(func_name, $3); }
+func_exp:  IDENTIFIER '(' param_list ')' 
+        { $$ = new builtin_func_node(func_name, $3); }
+    ;
 
+/* FIXME */
 param_list:  /* empty */ {$$ = NULL; }
-    | param  { $$ = func_paramter_list($1); }
-    | param_list ',' param  { $$ = append_param($1, $2); };
+    | IDENTIFIER  { $$ = new func_paramter_list($1); }
+    | param_list ',' IDENTIFIER  { $$ = append_param($1, $3); };
 
 %%
 
