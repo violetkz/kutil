@@ -1,6 +1,7 @@
+#ifndef NS_DEF_H____
+#define NS_DEF_H____
 
 #include <list>
-
 
 struct node {
     enum {
@@ -33,17 +34,18 @@ struct builtin_func_node : public node {
             plist(plist) {
         /* do nothing */
     }
-}
+};
 
 struct func_paramter_list : public node {
     std::list<char* > plist;
     func_paramter_list():node(FUNC_PARAM_LIST_NODE), plist(){
         /* do nothing */
     }
-}
+    
+    func_paramter_list* append(char *p) {
+        plist.push_back(p);
+        return this;
+    }
+};
 
-func_paramter_list* append_param(func_paramter_list *plist, const char* new_param) {
-    if (plist && new_param) 
-        plist->push_back(new_param);
-    return plist;
-}
+#endif //~NS_DEF_H____
