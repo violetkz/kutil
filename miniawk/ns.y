@@ -17,7 +17,7 @@ void yyerror(const char *s);
 %start start
 %%
 
-start: stmt EOL { /* calc */ }
+start: stmt EOL { $1->print(); }
 
 stmt: /* empty */ {$$ = NULL;}
     | pattern '{' action '}' { puts("stmt\n"); 
@@ -30,24 +30,36 @@ pattern: /* empty */ {$$ = NULL;}
     | STR       {puts("STR\n"); $$ = new str_node($1);}
     ;
 
+explist: /* empty */ {$$ = NULL;}
+    | exp { $$ = new exp_node(); }
+    | explist exp { $$ = $1->append($2); }
+    ;
+
 action:  /* empty */ {$$ = NULL;}
     | func_exp  {puts("action-exp\n"); $$ = $1;}
     ;
 
-func_exp:  IDENTIFIER '(' param_list ')' 
+func_exp:  IDENTIFIER '(' param_list ')' ';' 
         {puts("func_exp"); $$ = new builtin_func_node($1, $3); }
     ;
 
-param_list:  /* empty */ {puts("param_list empty\n"); $$ = new func_paramter_list; }
-/*    | IDENTIFIER  {puts("IDENTIFIER"); $$ = static_cast<func_paramter_list *>($$)->append($1); } */
-    | param_list ',' IDENTIFIER  {puts("param_list,IDENTIFIER\n"); $$ = static_cast<func_paramter_list *>($1)->append($3); };
+param_list:  /* empty */ {puts("param_list empty\n"); $$ = NULL; }
+    | IDENTIFIER  {
+        puts("IDENTIFIER");
+        $$ = new func_paramter_node($1); 
+        }
+    | param_list ',' IDENTIFIER  {
+            puts("param_list,IDENTIFIER\n");
+            func_paramter_node* pl = static_cast<func_paramter_node *>($1);
+            $$ = pl->append(new func_paramter_node($3));
+            };
 
 %%
 
 void yyerror(const char *s) {
     extern int yylineno;
     extern char * yytext;
-    printf("[Error], Line: %d, Msg: %s \n", yylineno, yytext);
+    printf("[Error], Line: %d, Msg: [%s] \n", yylineno, yytext);
 }
 
 int main(void) {

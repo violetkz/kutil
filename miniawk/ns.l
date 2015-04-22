@@ -41,11 +41,15 @@ extern void yyerror(const char *s);
                 yylval.strval = strdup(action);
                 return REGEXSTR;
             }
+";" | 
 "," |
 "{" |
 "}" |
 ")" |
 "("         {return yytext[0];}
-.           {yyerror("unkown token.");}
 <<EOF>>     {return EOL;}
+.           {
+            printf("E:[%c]\n", yytext[0]);
+            yyerror("unkown token.");
+            }
 %%
