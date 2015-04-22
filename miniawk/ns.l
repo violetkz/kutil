@@ -1,6 +1,7 @@
 %option noyywrap nodefault yylineno
 %{
 #include "ns.tab.h"
+extern void yyerror(const char *s);
 %}
 %%
 [ \t\n]    ;  /* Skip  whitespaces */
@@ -45,5 +46,6 @@
 "}" |
 ")" |
 "("         {return yytext[0];}
-.           {yyerror("unkown token. %c\n", *yytext);}
+.           {yyerror("unkown token.");}
+<<EOF>>     {return EOL;}
 %%

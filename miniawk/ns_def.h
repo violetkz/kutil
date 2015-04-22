@@ -28,7 +28,7 @@ struct regex_str_node : public node {
     regex_str_node(char* str):node(REGEX_STR_NODE), regex_str(str) {
         /* do nothing */  
     }
-}
+};
 
 struct stmt_node : public node {
     node* pattern;
@@ -52,6 +52,16 @@ struct builtin_func_node : public node {
         /* do nothing */
     }
 };
+
+struct func_paramter_node : public node {
+    char* param_name;
+    struct func_paramter_node *next; /* point to next paramter */
+    
+    func_paramter_node(const char* p)
+            :node(FUNC_PARM_NOE), param_name(p),  next(NULL)  {
+        /* do nothing */
+    }
+}
 
 struct func_paramter_list : public node {
     std::list<char* > plist;
