@@ -8,10 +8,27 @@ struct node {
         STMT_NODE,
         FUNC_PARAM_LIST_NODE,
         FUNC_NODE,
+        STR_NODE,
+        REGEX_STR_NODE
     };
     int node_type;
     node(int t) : node_type(t) {}
 };
+
+struct str_node : public node {
+    char* s;
+    str_node(char* str):node(STR_NODE), s(str) {
+        /* do nothing */
+    }
+};
+
+struct regex_str_node : public node {
+    char* regex_str;
+    
+    regex_str_node(char* str):node(REGEX_STR_NODE), regex_str(str) {
+        /* do nothing */  
+    }
+}
 
 struct stmt_node : public node {
     node* pattern;
