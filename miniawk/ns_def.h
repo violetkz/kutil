@@ -10,7 +10,9 @@ struct node {
         FUNC_PARAM_NODE,
         FUNC_NODE,
         STR_NODE,
-        REGEX_STR_NODE
+        REGEX_STR_NODE,
+        ASSIGN_NODE, 
+        EXP_NODE, 
     };
     int node_type;
     node(int t) : node_type(t) {}
@@ -57,23 +59,71 @@ struct stmt_node : public node {
     }
 };
 
-struct builtin_func_node : public node {
+struct exp_node : public node {
+    //const char* param_name;
+    struct exp_node *next; /* point to next exp */
+    
+    exp_node(int n):node(n), next(NULL) {
+        /* do nothing */
+    }
+    
+    exp_node* append(exp_node *n) {
+        exp_node *tail = this; 
+        while  (tail->next != NULL) {
+            tail = tail->next;
+        }
+        tail->next = n;
+        return this;
+    }
+    
+    virtual void print_exp() {
+    }
+
+    void print() {
+        exp_node *t = this;
+        while (t != NULL) {
+            t->print_exp();
+            t = t->next;
+        }
+    }
+};
+
+struct assign_node : public exp_node {
+    char* variable_name;
+    char* variable_val;
+    assign_node(char* name, char* val)
+        :exp_node(ASSIGN_NODE),
+        variable_name(name), 
+        variable_val(val) {
+        /* do nothing */
+    }
+    virtual void print_exp() {
+        printf("assign node: node type => %d, vname => [%s],  value => [%s] \n",
+               node_type, 
+               variable_name, 
+               variable_val
+               ); 
+    }
+};
+
+struct builtin_func_node : public exp_node {
     const char* func_name;
     node* plist;
 
     builtin_func_node(const char *name, node *plist)
-            :node(FUNC_NODE),
+            :exp_node(FUNC_NODE),
             func_name(name),
             plist(plist) {
         /* do nothing */
     }
     
-    void print() {
+    void print_exp() {
         printf("func node: node type=> %d, funcname %s\n",
                 node_type, func_name);     
         plist->print();
     }
 };
+
 
 struct func_paramter_node : public node {
     const char* param_name;
@@ -96,7 +146,7 @@ struct func_paramter_node : public node {
     void print() {
         func_paramter_node *t = this;
         while (t != NULL) {
-            printf("func_paramter_node: node type=> %d, param_name%s\n",
+            printf("func_paramter_node: node type=> %d, param_name => [%s]\n",
                     t->node_type, t->param_name);
             t = t->next;
         }

@@ -6,7 +6,7 @@ extern void yyerror(const char *s);
 %%
 [ \t\n]    ;  /* Skip  whitespaces */
 [A-Za-z0-9_]+  { yylval.strval = strdup(yytext); return  IDENTIFIER; }
-\".*\"      { yylval.strval = strdup(yytext); return STR; }
+\"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
 "/"         { 
                 int c;
                 char action[1024];
@@ -41,15 +41,17 @@ extern void yyerror(const char *s);
                 yylval.strval = strdup(action);
                 return REGEXSTR;
             }
+"=" |
 ";" | 
 "," |
 "{" |
 "}" |
 ")" |
 "("         {return yytext[0];}
-<<EOF>>     {return EOL;}
 .           {
-            printf("E:[%c]\n", yytext[0]);
+            printf("---");
+            ECHO;
+            printf("E:[%c]\n", *yytext);
             yyerror("unkown token.");
             }
 %%
