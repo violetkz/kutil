@@ -14,7 +14,6 @@ void yyerror(const char *s);
 };
 
 %token <strval> STR REGEXSTR IDENTIFIER 
-%token EOL
 %type <ast>     stmt  pattern 
 %type <ast_exp> func_exp assign_exp exp explist 
 %type <ast_param>  param param_list
@@ -34,6 +33,16 @@ pattern: /* empty */ {$$ = NULL;}
 
 explist: /* empty */ {$$ = NULL;}
     | explist exp { 
+            /* $$ = $1;
+
+               if (!$$) {
+                    $$ = new std::list<exp_node* >;
+                    $$->push_back($2);
+               } else {
+                    $$->push_back($2);
+               }
+               
+             */
                     if ($1 == NULL) {
                         $$ = $2;
                     }
