@@ -8,6 +8,7 @@ class node {
 public:
     enum {
         STMT_NODE,
+        STMT_LIST_NODE,
         FUNC_PARAM_LIST_NODE,
         FUNC_PARAM_NODE,
         FUNC_NODE,
@@ -33,6 +34,10 @@ class identifer_node : public node {
 public:
     identifer_node(char* s) : node(IDENTIFIER_NODE), id(s) {
         /* do nothing */
+    }
+    void print() {
+        printf("identifer_node: type => %d, name => %s\n",
+                type, id);
     }
 protected:
     char *id;
@@ -83,10 +88,32 @@ protected:
     node* action;
 };
 
+class stmt_list_node : public node {
+public:
+    stmt_list_node() : node(STMT_LIST_NODE), slist() {
+    }
+    
+    void append(stmt_node *n) {
+        slist.push_back(n);
+    }
+
+    void print() {
+        std::list<stmt_node*>::iterator it = slist.begin();
+        for (;it != slist.end(); ++it) {
+            (*it)->print();
+        }
+    }
+protected:
+    std::list<stmt_node *> slist; 
+};
+
 class exp_node : public node {
 public:
     exp_node(int n):node(n) {
         /* do nothing */
+    }
+    void print() {
+        printf("expnode");
     }
 };
 
@@ -99,6 +126,12 @@ public:
         elist.push_back(n);
     }
 
+    void print() {
+        std::list<exp_node*>::iterator it = elist.begin();
+        for (;it != elist.end(); ++it) {
+            (*it)->print();
+        }
+    }
 protected:
     std::list<exp_node *> elist; 
 };
@@ -111,7 +144,7 @@ public:
                 variable_val(val) {
         /* do nothing */
     }
-    virtual void print_exp() {
+    void print() {
         printf("assign node: node type => %d, vname => [%s],  value => [%s] \n",
                type, 
                variable_name, 
@@ -131,6 +164,13 @@ public:
     void append(node *n) {
         plist.push_back(n);
     }
+
+    void print() {
+        std::list<node*>::iterator it = plist.begin();
+        for (;it != plist.end(); ++it) {
+            (*it)->print();
+        }
+    }
 protected:
     std::list<node*>  plist; 
 };
@@ -147,6 +187,7 @@ public:
     void print() {
         printf("func node: node type=> %d, funcname %s\n",
                 type, func_name);     
+        plist->print();
     }
 
 protected:

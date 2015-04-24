@@ -16,20 +16,34 @@ void yyerror(const char *s);
     explist_node*       ast_explist;
     paramter_list_node* ast_param_list;
     func_paramter_node* ast_param;
+    stmt_list_node*     ast_stmts;
+    stmt_node*          ast_stmt;
 };
 
 %token <strval> STR REGEXSTR IDENTIFIER 
-%type <ast>         stmt pattern param 
+%type <ast>         pattern param 
 %type <ast_exp>     exp
 %type <ast_func>    func_exp 
 %type <ast_assign>  assign_exp 
 %type <ast_explist> explist
 %type <ast_param_list> param_list
+%type <ast_stmts>   stmt_list
+%type <ast_stmt>    stmt
 
 %start start
 %%
-start: stmt  { $1->print();}
-
+start: stmt_list { if ($1 != NULL) $1->print(); }
+ 
+stmt_list: /* empty */ { $$ = NULL; } 
+    | stmt_list stmt   { 
+                            $$ = $1;
+                            if ($$ == NULL) {
+                                $$ = new stmt_list_node;
+                            }
+                            $$ -> append($2);
+                       }
+    ;
+    
 stmt: /* empty */             { $$ = NULL;}
     | pattern '{' explist '}' { $$ = new stmt_node($1, $3); }
     ;
@@ -61,22 +75,21 @@ func_exp:  IDENTIFIER '(' param_list ')' ';'
 
 assign_exp: IDENTIFIER '=' STR ';'  { $$ = new assign_node($1, $3); }  
 
-param_list:  /* empty */ { $$ = NULL;}
-    | param  { 
-                if($$ == NULL) {
-                    $$ = new paramter_list_node; 
-                    $$->append($1);
-                }
-             }
+param_list:  /* empty */ { $$ = NULL;} 
+    | param { $$ = new paramter_list_node;
+              $$->append($1);
+            }
     | param_list ',' param 
         {   $$ = $1;
-            if ($$ == NULL) {
+            if ($1 == NULL) {
                 $$ = new paramter_list_node;
             }
             $$->append($3);
         };
 
-param: IDENTIFIER { $$ = new identifer_node($1); }
+param: IDENTIFIER { 
+                    printf("=i= %s\n", $1);
+                    $$ = new identifer_node($1); }
      | STR        { $$ = new str_node($1); }
      ;
 

@@ -10,7 +10,8 @@ char *makebuffer(size_t n);
 %}
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
-[A-Za-z0-9_]+  { yylval.strval = strdup(yytext); return IDENTIFIER; }
+[A-Za-z0-9_]+  { yylval.strval = strdup(yytext); printf("lex: %s\n",yylval.strval);
+                 return IDENTIFIER; }
 \"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
 "/"            { 
                 int c;
@@ -59,6 +60,7 @@ char *makebuffer(size_t n);
 
 char* makebuffer(size_t n) {
     char* buff = (char *)malloc(n);
+    memset(buff, 0x00, n);
     return buff;
 }
 
