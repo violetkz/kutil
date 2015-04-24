@@ -4,19 +4,27 @@
 int yylex(void); 
 void yyerror(const char *s);
 
+#define YYDEBUG  1
 %}
 
 %union {
     char* strval;
-    struct node*      ast;
-    struct exp_node*  ast_exp;
-    struct func_paramter_node* ast_param;
+    node*               ast;
+    builtin_func_node*  ast_func;
+    exp_node*           ast_exp;
+    assign_node*        ast_assign;
+    explist_node*       ast_explist;
+    paramter_list_node* ast_param_list;
+    func_paramter_node* ast_param;
 };
 
 %token <strval> STR REGEXSTR IDENTIFIER 
-%type <ast>     stmt  pattern 
-%type <ast_exp> func_exp assign_exp exp explist 
-%type <ast_param>  param param_list
+%type <ast>         stmt pattern param 
+%type <ast_exp>     exp
+%type <ast_func>    func_exp 
+%type <ast_assign>  assign_exp 
+%type <ast_explist> explist
+%type <ast_param_list> param_list
 
 %start start
 %%
@@ -33,23 +41,12 @@ pattern: /* empty */ {$$ = NULL;}
 
 explist: /* empty */ {$$ = NULL;}
     | explist exp { 
-            /* $$ = $1;
+                    $$  = $1;
+                    if ($$ == NULL) {
+                        $$ = new explist_node;
+                    }
 
-               if (!$$) {
-                    $$ = new std::list<exp_node* >;
-                    $$->push_back($2);
-               } else {
-                    $$->push_back($2);
-               }
-               
-             */
-                    if ($1 == NULL) {
-                        $$ = $2;
-                    }
-                    else {
-                        exp_node* e = static_cast<exp_node *>($1);
-                        $$ = e->append($2);
-                    }
+                    $$->append($2);
                   }
     ;
 
@@ -64,16 +61,24 @@ func_exp:  IDENTIFIER '(' param_list ')' ';'
 
 assign_exp: IDENTIFIER '=' STR ';'  { $$ = new assign_node($1, $3); }  
 
-param_list:  /* empty */ { $$ = NULL; }
-    | param  
-    | param_list ',' param  {
-            
-            func_paramter_node* pl = static_cast<func_paramter_node *>($1);
-            $$ = pl->append($3);
-            };
+param_list:  /* empty */ { $$ = NULL;}
+    | param  { 
+                if($$ == NULL) {
+                    $$ = new paramter_list_node; 
+                    $$->append($1);
+                }
+             }
+    | param_list ',' param 
+        {   $$ = $1;
+            if ($$ == NULL) {
+                $$ = new paramter_list_node;
+            }
+            $$->append($3);
+        };
 
-param: IDENTIFIER  {$$ = new func_paramter_node($1);}
-     | STR  {$$ = new func_paramter_node($1);}
+param: IDENTIFIER { $$ = new identifer_node($1); }
+     | STR        { $$ = new str_node($1); }
+     ;
 
 %%
 

@@ -1,26 +1,32 @@
 %option noyywrap nodefault yylineno
 %{
+
+#include "ns_def.h"
 #include "ns.tab.h"
 extern void yyerror(const char *s);
+
+char *makebuffer(size_t n);
+
 %}
 %%
-[ \t\n]    ;  /* Skip  whitespaces */
-[A-Za-z0-9_]+  { yylval.strval = strdup(yytext); return  IDENTIFIER; }
+[ \t\n]    ;   /* Skip  whitespaces */
+[A-Za-z0-9_]+  { yylval.strval = strdup(yytext); return IDENTIFIER; }
 \"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
-"/"         { 
+"/"            { 
                 int c;
-                char action[1024];
                 int i = 0;
                 int escapeflg = 0;
+                
+                char* buff = makebuffer(1024);
                 while (i < 1024) { 
                     c = yyinput();
                     if (c == EOF || c == '\0') {
-                        puts("[error]: bad action str.\n");
+                        puts("[error]: bad regex str.\n");
                         yyterminate();
                     }
                     if (escapeflg == 0) {  /* the presourse char is not escape char */
                         if (c == '/')  break;
-                        if (c != '\\') action[i++] = c;
+                        if (c != '\\') buff[i++] = c;
                         else {
                             escapeflg = 1; /* set escapeflg as True */
                         }
@@ -28,30 +34,34 @@ extern void yyerror(const char *s);
                     }
                     else { 
                         if (c == '/') {
-                            action[i++] = c;
+                            buff[i++] = c;
                         }
                         else {
-                            action[i++] = '\\';
-                            action[i++] = 'c';
+                            buff[i++] = '\\';
+                            buff[i++] = 'c';
                         }
                         escapeflg = 0;
                     }
                 }
-                action[i] = '\0';
-                yylval.strval = strdup(action);
+                buff[i] = '\0';
+                yylval.strval = buff;;
                 return REGEXSTR;
             }
 "=" |
-";" | 
+";" |
 "," |
 "{" |
 "}" |
 ")" |
-"("         {return yytext[0];}
-.           {
-            printf("---");
-            ECHO;
-            printf("E:[%c]\n", *yytext);
-            yyerror("unkown token.");
-            }
+"("         {return yytext[0]; }
+.           { yyerror("unkown token."); }
 %%
+
+char* makebuffer(size_t n) {
+    char* buff = (char *)malloc(n);
+    return buff;
+}
+
+void free_strval(char *s) {
+    if (s != NULL) free(s);
+}

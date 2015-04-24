@@ -8,11 +8,11 @@ lextest_src: miniawk.l
 	flex -o miniawk_lex.c miniawk.l
 
 ns: ns.y ns.l ns_def.h
-	bison -d ns.y 
+	bison -t -d ns.y 
 	flex -o ns_lex.cpp ns.l
 	
-	mv ns.tab.c ns.tab.cpp
-	g++ -g -o ns  ns.tab.cpp ns_lex.cpp 
+	#mv ns.tab.c ns.tab.cpp
+	g++ -g -o ns ns.tab.c ns_lex.cpp 
 
 clean:
 	rm -rf *.o *.exe  *.out *.dSYM ns lextest
