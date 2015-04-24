@@ -15,5 +15,5 @@ ns: ns.y ns.l ns_def.h
 	g++ -g -o ns ns.tab.c ns_lex.cpp 
 
 clean:
-	rm -rf *.o *.exe  *.out *.dSYM ns lextest
+	rm -rf *.o *.exe  *.out *.dSYM ns lextest ns.tab.c ns.tab.cpp ns.tab.h ns_lex.c ns_lex.cpp
 
