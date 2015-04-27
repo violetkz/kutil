@@ -11,13 +11,15 @@ char *makebuffer(size_t n);
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
 
-"print" |
-"getline"  {yylval.fn = yytext; return BUILTIN_FUNC;}
+"substr" |
+"split"  |
+"print"  |
+"getline"  {yylval.fn = strdup(yytext); return BUILTIN_FUNC;}
 
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
 [A-Za-z_][A-Za-z0-9_]*  { 
-                /* FIXME, should return string, because identifier is used by more than one rules */
-                yylval.strval = install_symbol(yylval.strval);
+                yylval.sym = install_symbol(yytext);
+                /* yylval.strval = yytext;  */
                 return IDENTIFIER; 
                }
 \"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }

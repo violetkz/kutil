@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 #include <list>
+#include <string>
+
+struct symbol;
 
 /* the base class to present AST node */
 class node {
@@ -28,6 +31,9 @@ public:
     /* print self node */ 
     virtual void print() {}
     
+    /* eval */
+    virtual void eval() {}
+    
 protected:
     int type;
 };
@@ -38,11 +44,10 @@ public:
         /* do nothing */
     }
     void print() {
-        printf("identifer_node: type => %d, name => %s\n",
-                type, id);
+        printf("identifer_node: type => %d \n", type );
     }
 protected:
-    symtol* sym;
+    symbol* sym;
 };
 
 /* string node */
@@ -150,7 +155,7 @@ public:
 protected:
     std::list<exp_node *> elist; 
 };
-#if 0
+
 class assign_node : public exp_node {
 public:
     assign_node(symbol *id, node* val):exp_node(ASSIGN_NODE),
@@ -160,11 +165,11 @@ public:
     }
 
 protected:
-    sybol* variable_name;
+    symbol* variable_name;
     node*  rvalue;
 };
-#endif
 
+#if 0
 class assign_node : public exp_node {
 public:
     assign_node(char* name, char* val)
@@ -184,6 +189,7 @@ protected:
     char* variable_name;
     char* variable_val;
 };
+#endif
 
 class paramter_list_node : public node {
 public:
@@ -240,7 +246,7 @@ class func_paramter_node : public node {
 };
 
 /* symbol info */
-struct symtol {
+struct symbol {
     std::string id;
     int type;
     union {
@@ -251,6 +257,6 @@ struct symtol {
     };
 };
 
-void install_symbol(char *name);
+symbol* install_symbol(char *name);
 
 #endif //~NS_DEF_H____

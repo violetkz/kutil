@@ -1,11 +1,9 @@
 "string" { print(id, 1, 2, 3, 4, 5, 6);
-           vprint("xx", "2", "xx");
            a = 1;
            a = "xx";
            a = /xx/;
          }
 
 "test" { print(id, 1, 2, 3, 4, 5, 6);
-         vprint("xx", "2", "xx");
          b = "xx";
        }

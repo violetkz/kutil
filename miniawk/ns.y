@@ -10,6 +10,7 @@ void yyerror(const char *s);
 %union {
     char* strval;
     int   intval;
+    char* fn;
     symbol*             sym;
     node*               ast;
     builtin_func_node*  ast_func;
@@ -22,10 +23,12 @@ void yyerror(const char *s);
     stmt_node*          ast_stmt;
 };
 
-%token <strval> STR REGEXSTR 
-%token <sym>    IDENTIFIER 
+%token <strval> STR REGEXSTR
+%token <fn>     BUILTIN_FUNC
+%token <sym>    IDENTIFIER
 %token <intval> NUM_INT
-%type <ast>         pattern param 
+
+%type <ast>         pattern param rvalue
 %type <ast_exp>     exp
 %type <ast_func>    func_exp 
 %type <ast_assign>  assign_exp 
@@ -72,17 +75,17 @@ exp:
     | assign_exp  {$$ = $1;}
     ;
 
-func_exp:  IDENTIFIER '(' param_list ')' ';' 
+func_exp: BUILTIN_FUNC '(' param_list ')' ';' 
         {$$ = new builtin_func_node($1, $3); }
     ;
 
+rvalue: STR             {$$ = new str_node($1);}
+      | REGEXSTR        {$$ = new regex_str_node($1);}
+      | NUM_INT         {$$ = new int_node($1);}
 
-rvalue: STR 
-      | REGEX_STR_NODE
-      | NUM_INT
-
-assign_exp: IDENTIFIER '=' STR ';'  {  /* TODO here handle symbol */
-          $$ = new assign_node($1, $3); }  
+assign_exp: IDENTIFIER '=' rvalue ';'  {
+              $$ = new assign_node($1, $3);
+          }  
 
 param_list:  /* empty */ { $$ = NULL;} 
     | param { $$ = new paramter_list_node;
@@ -97,9 +100,7 @@ param_list:  /* empty */ { $$ = NULL;}
         }
     ;
 
-param: IDENTIFIER { 
-                    printf("=i= %s\n", $1);
-                    $$ = new identifer_node($1);}
+param: IDENTIFIER { $$ = new identifer_node($1);}
      | STR        { $$ = new str_node($1);}
      | NUM_INT    { $$ = new int_node($1);}
      ;
