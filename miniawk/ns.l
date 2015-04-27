@@ -10,8 +10,11 @@ char *makebuffer(size_t n);
 %}
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
-[A-Za-z0-9_]+  { yylval.strval = strdup(yytext); printf("lex: %s\n",yylval.strval);
-                 return IDENTIFIER; }
+[0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
+[A-Za-z_][A-Za-z0-9_]*  { yylval.strval = strdup(yytext); 
+                install_symbol(yylval.strval);
+                return IDENTIFIER; 
+               }
 \"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
 "/"            { 
                 int c;

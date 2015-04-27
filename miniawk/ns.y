@@ -9,6 +9,7 @@ void yyerror(const char *s);
 
 %union {
     char* strval;
+    int   intval;
     node*               ast;
     builtin_func_node*  ast_func;
     exp_node*           ast_exp;
@@ -21,6 +22,7 @@ void yyerror(const char *s);
 };
 
 %token <strval> STR REGEXSTR IDENTIFIER 
+%token <intval> NUM_INT
 %type <ast>         pattern param 
 %type <ast_exp>     exp
 %type <ast_func>    func_exp 
@@ -44,8 +46,7 @@ stmt_list: /* empty */ { $$ = NULL; }
                        }
     ;
     
-stmt: /* empty */             { $$ = NULL;}
-    | pattern '{' explist '}' { $$ = new stmt_node($1, $3); }
+stmt: pattern '{' explist '}' { $$ = new stmt_node($1, $3); }
     ;
 
 pattern: /* empty */ {$$ = NULL;}
@@ -73,6 +74,11 @@ func_exp:  IDENTIFIER '(' param_list ')' ';'
         {$$ = new builtin_func_node($1, $3); }
     ;
 
+
+rvalue: STR 
+      | REGEX_STR_NODE
+      | NUM_INT
+
 assign_exp: IDENTIFIER '=' STR ';'  { $$ = new assign_node($1, $3); }  
 
 param_list:  /* empty */ { $$ = NULL;} 
@@ -85,12 +91,14 @@ param_list:  /* empty */ { $$ = NULL;}
                 $$ = new paramter_list_node;
             }
             $$->append($3);
-        };
+        }
+    ;
 
 param: IDENTIFIER { 
                     printf("=i= %s\n", $1);
-                    $$ = new identifer_node($1); }
-     | STR        { $$ = new str_node($1); }
+                    $$ = new identifer_node($1);}
+     | STR        { $$ = new str_node($1);}
+     | NUM_INT    { $$ = new int_node($1);}
      ;
 
 %%

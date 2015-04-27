@@ -1,6 +1,7 @@
 #ifndef NS_DEF_H____
 #define NS_DEF_H____
 
+#include <stdio.h>
 #include <list>
 
 /* the base class to present AST node */
@@ -17,7 +18,8 @@ public:
         ASSIGN_NODE, 
         EXP_NODE, 
         EXPLIST_NODE,
-        IDENTIFIER_NODE
+        IDENTIFIER_NODE,
+        NUM_INT_NODE
     };
     
     node(int t) : type(t) {}
@@ -41,6 +43,19 @@ public:
     }
 protected:
     char *id;
+};
+
+/* string node */
+class int_node : public node {
+public:
+    int_node(int n) : node(NUM_INT_NODE), i(n) {
+        /* do nothing */
+    }
+    virtual void print() {
+        printf("str node: node type=> %d, s => %d\n", type, i); 
+    }
+protected:
+    int i;
 };
 
 /* string node */
@@ -209,5 +224,18 @@ class func_paramter_node : public node {
                     type, param_name);
     }
 };
+
+/* symbol info */
+struct symtol {
+    int type;
+    union {
+        int     int_val;
+        char*   chr_val;
+        double  dbl_val;
+        node*   node_val;
+    };
+};
+
+void install_symbol(char *name);
 
 #endif //~NS_DEF_H____
