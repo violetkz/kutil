@@ -10,9 +10,14 @@ char *makebuffer(size_t n);
 %}
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
+
+"print" |
+"getline"  {yylval.fn = yytext; return BUILTIN_FUNC;}
+
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
-[A-Za-z_][A-Za-z0-9_]*  { yylval.strval = strdup(yytext); 
-                install_symbol(yylval.strval);
+[A-Za-z_][A-Za-z0-9_]*  { 
+                /* FIXME, should return string, because identifier is used by more than one rules */
+                yylval.strval = install_symbol(yylval.strval);
                 return IDENTIFIER; 
                }
 \"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
@@ -58,6 +63,9 @@ char *makebuffer(size_t n);
 "}" |
 ")" |
 "("         {return yytext[0]; }
+
+
+
 .           { yyerror("unkown token."); }
 %%
 

@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <cstring>
 #include <map>
+#include <string>
 #include "ns_def.h"
 
 struct mycmp {
@@ -14,8 +15,8 @@ class ns_symtbl {
 
 public:
     /* symbol table */
-    typedef std::map<char*, symtol*, mycmp> symtbl;
-    typedef std::map<char*, symtol*, mycmp>::iterator symtbl_iterator;
+    typedef std::map<std::string, symtol*> symtbl;
+    typedef std::map<std::string, symtol*>::iterator symtbl_iterator;
 
 public:
     static ns_symtbl::symtbl* get_tbl() {
@@ -34,15 +35,20 @@ ns_symtbl::symtbl* ns_symtbl::tbl = NULL;
 void install_symbol(char* name) {
     ns_symtbl::symtbl* tbl = ns_symtbl::get_tbl();
     
-    ns_symtbl::symtbl_iterator it = tbl->find(name);
+    std::string id(name);
+    ns_symtbl::symtbl_iterator it = tbl->find(id);
     
-    printf("-debug-: name: %s count: %d\n", name, tbl->count(name));
     /* if not existed, create new item */
+    ns_symtbl::symtbl* n = NULL;
     if (it == tbl->end()) { 
-        (*tbl)[name] = new symtol;
+        n = new symtol;
+        n->id = id;
+        (*tbl)[id] = n;
         printf("-debug-: install symbol=> %s\n", name);
     }
     else {
+        n = (*tbl)[id];
         printf("-debug-: found symbol => %s\n", name);    
     }
+    return n;
 }

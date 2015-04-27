@@ -34,7 +34,7 @@ protected:
 
 class identifer_node : public node {
 public:
-    identifer_node(char* s) : node(IDENTIFIER_NODE), id(s) {
+    identifer_node(symbol* s) : node(IDENTIFIER_NODE), sym(s) {
         /* do nothing */
     }
     void print() {
@@ -42,7 +42,7 @@ public:
                 type, id);
     }
 protected:
-    char *id;
+    symtol* sym;
 };
 
 /* string node */
@@ -150,6 +150,20 @@ public:
 protected:
     std::list<exp_node *> elist; 
 };
+#if 0
+class assign_node : public exp_node {
+public:
+    assign_node(symbol *id, node* val):exp_node(ASSIGN_NODE),
+                variable_name(id), 
+                rvalue(val) {
+        /* do nothing */
+    }
+
+protected:
+    sybol* variable_name;
+    node*  rvalue;
+};
+#endif
 
 class assign_node : public exp_node {
 public:
@@ -227,6 +241,7 @@ class func_paramter_node : public node {
 
 /* symbol info */
 struct symtol {
+    std::string id;
     int type;
     union {
         int     int_val;

@@ -10,6 +10,7 @@ void yyerror(const char *s);
 %union {
     char* strval;
     int   intval;
+    symbol*             sym;
     node*               ast;
     builtin_func_node*  ast_func;
     exp_node*           ast_exp;
@@ -21,7 +22,8 @@ void yyerror(const char *s);
     stmt_node*          ast_stmt;
 };
 
-%token <strval> STR REGEXSTR IDENTIFIER 
+%token <strval> STR REGEXSTR 
+%token <sym>    IDENTIFIER 
 %token <intval> NUM_INT
 %type <ast>         pattern param 
 %type <ast_exp>     exp
@@ -79,7 +81,8 @@ rvalue: STR
       | REGEX_STR_NODE
       | NUM_INT
 
-assign_exp: IDENTIFIER '=' STR ';'  { $$ = new assign_node($1, $3); }  
+assign_exp: IDENTIFIER '=' STR ';'  {  /* TODO here handle symbol */
+          $$ = new assign_node($1, $3); }  
 
 param_list:  /* empty */ { $$ = NULL;} 
     | param { $$ = new paramter_list_node;
