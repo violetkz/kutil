@@ -1,9 +1,8 @@
-"string" { print(id, 1, 2, 3, 4, 5, 6);
-           a = 1;
-           a = "xx";
-           a = /xx/;
-         }
+"string" { 
+    a = 1;
+    a = "xx";
+    b = "222";
+    d = 2222;
+    print(a,b,d); 
+}
 
-"test" { print(id, 1, 2, 3, 4, 5, 6);
-         b = "xx";
-       }

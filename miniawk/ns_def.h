@@ -34,7 +34,7 @@ public:
     /* eval */
     virtual void eval() {}
     
-protected:
+public:
     int type;
 };
 
@@ -46,7 +46,7 @@ public:
     void print() {
         printf("identifer_node: type => %d \n", type );
     }
-protected:
+public:
     symbol* sym;
 };
 
@@ -59,7 +59,7 @@ public:
     virtual void print() {
         printf("str node: node type=> %d, s => %d\n", type, i); 
     }
-protected:
+public:
     int i;
 };
 
@@ -72,7 +72,7 @@ public:
     virtual void print() {
         printf("str node: node type=> %d, s => %s\n", type, str); 
     }
-protected:
+public:
     char* str;
 };
 
@@ -85,7 +85,7 @@ public:
         printf("str node: node type=> %d, s => %s\n", type, regex_str); 
     }
 
-protected:
+public:
     char* regex_str;
 };
 
@@ -102,8 +102,14 @@ public:
         pattern->print();
         action->print();
     }
+    
+    virtual void eval() {
+        puts("stmt_node\n");
+        pattern->eval();
+        action->eval();
+    }
 
-protected:
+public:
     node* pattern;
     node* action;
 };
@@ -123,7 +129,15 @@ public:
             (*it)->print();
         }
     }
-protected:
+    
+    void eval() {
+        puts("stmt_list_node\n"); 
+        std::list<stmt_node*>::iterator it = slist.begin();
+        for (;it != slist.end(); ++it) {
+            (*it)->eval();
+        }
+    }
+public:
     std::list<stmt_node *> slist; 
 };
 
@@ -152,7 +166,15 @@ public:
             (*it)->print();
         }
     }
-protected:
+
+    void eval() {
+        puts("explist_node\n");
+        std::list<exp_node*>::iterator it = elist.begin();
+        for (;it != elist.end(); ++it) {
+            (*it)->eval();
+        }
+    }
+public:
     std::list<exp_node *> elist; 
 };
 
@@ -163,8 +185,9 @@ public:
                 rvalue(val) {
         /* do nothing */
     }
+    void eval();
 
-protected:
+public:
     symbol* variable_name;
     node*  rvalue;
 };
@@ -185,7 +208,7 @@ public:
                variable_val
                ); 
     }
-protected:
+public:
     char* variable_name;
     char* variable_val;
 };
@@ -206,7 +229,7 @@ public:
             (*it)->print();
         }
     }
-protected:
+public:
     std::list<node*>  plist; 
 };
 
@@ -225,7 +248,9 @@ public:
         plist->print();
     }
 
-protected:
+    void eval();
+
+public:
     const char* func_name;
     paramter_list_node* plist;
 };

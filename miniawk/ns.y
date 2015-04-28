@@ -39,7 +39,11 @@ void yyerror(const char *s);
 
 %start start
 %%
-start: stmt_list { if ($1 != NULL) $1->print(); }
+start: stmt_list { if ($1 != NULL) {
+                    $1->print();
+                    $1->eval();
+                    }
+                 }
  
 stmt_list: /* empty */ { $$ = NULL; } 
     | stmt_list stmt   { 
