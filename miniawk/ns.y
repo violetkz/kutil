@@ -85,11 +85,15 @@ func_exp: BUILTIN_FUNC '(' param_list ')' ';'
         {$$ = new builtin_func_node($1, $3); }
     ;
 
-rvalue: STR             {$$ = new str_node($1);}
-      | REGEXSTR        {$$ = new regex_str_node($1);}
-      | NUM_INT         {$$ = new int_node($1);}
+rvalue: STR             {/*$$ = new str_node($1); */}
+      | REGEXSTR        {/*$$ = new regex_str_node($1);*/}
+      | NUM_INT         {/*$$ = new int_node($1);*/}
 
 assign_exp: IDENTIFIER '=' rvalue ';'  {
+                /* 
+                    assign_node(int);
+                    assign_node(char *, FLAG);
+                */
               $$ = new assign_node($1, $3);
           }  
 
@@ -106,6 +110,10 @@ param_list:  /* empty */ { $$ = NULL;}
         }
     ;
 
+/* delete str_node/int_node, should be as paramter of prarm.
+*  param(int)
+*  param(char *);
+*/
 param: IDENTIFIER { $$ = new identifer_node($1);}
      | STR        { $$ = new str_node($1);}
      | NUM_INT    { $$ = new int_node($1);}

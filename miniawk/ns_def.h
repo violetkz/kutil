@@ -192,28 +192,6 @@ public:
     node*  rvalue;
 };
 
-#if 0
-class assign_node : public exp_node {
-public:
-    assign_node(char* name, char* val)
-                :exp_node(ASSIGN_NODE),
-                variable_name(name), 
-                variable_val(val) {
-        /* do nothing */
-    }
-    void print() {
-        printf("assign node: node type => %d, vname => [%s],  value => [%s] \n",
-               type, 
-               variable_name, 
-               variable_val
-               ); 
-    }
-public:
-    char* variable_name;
-    char* variable_val;
-};
-#endif
-
 class paramter_list_node : public node {
 public:
     paramter_list_node() : node(FUNC_PARAM_LIST_NODE), plist() {
@@ -276,9 +254,9 @@ struct symbol {
     int type;
     union {
         int     int_val;
-        char*   chr_val;
-        double  dbl_val;
-        node*   node_val;
+        char    *chr_val;
+        std::string     str;
+        node    *node_val;
     };
 };
 
