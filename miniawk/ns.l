@@ -11,6 +11,21 @@ char *makebuffer(size_t n);
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
 
+"if"    { return IF;  } 
+"else"  { return ELSE;}
+"for"   { return FOR; }
+"in"    { return IN;  }
+"and"   { return AND; }
+"or"    { return OR;  }
+
+">"     { return CMP_GT; }
+"<"     { return CMP_LS; }
+"=="    { return CMP_EQ; }
+">="    { return CMP_GE; }
+"<="    { return CMP_LE; }
+
+
+"len"    |
 "substr" |
 "split"  |
 "print"  |
@@ -58,6 +73,8 @@ char *makebuffer(size_t n);
                 yylval.strval = buff;;
                 return REGEXSTR;
             }
+"[" |
+"]" |
 "=" |
 ";" |
 "," |
@@ -65,7 +82,6 @@ char *makebuffer(size_t n);
 "}" |
 ")" |
 "("         {return yytext[0]; }
-
 
 
 .           { yyerror("unkown token."); }

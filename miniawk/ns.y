@@ -23,6 +23,8 @@ void yyerror(const char *s);
     stmt_node*          ast_stmt;
 };
 
+%token  IF ELSE AND OR FOR IN
+
 %token <strval> STR REGEXSTR
 %token <fn>     BUILTIN_FUNC
 %token <sym>    IDENTIFIER
