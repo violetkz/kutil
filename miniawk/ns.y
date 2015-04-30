@@ -76,39 +76,35 @@ explist: /* empty */ {$$ = NULL;}
                   }
     ;
 
-
-
-stmt:    FOR IDENTIFIER IN explist '{' new_stmts /*  maybe wrong. need fix'}'
-        | IF '(' explist ')' '{' new_stmts '}'
-        | IF '(' explist ')' '{' new_stmts '}' ELSE '{' new_stmts '}'
+stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
+        | IF '(' exp ')' '{' stmt_list '}'
+        | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
+        | exp ';'
 
 stmt_list: /* empty */ 
          | stmt_list, stmt
 
-exp:
-    | func '(' explist ')' 
-    | IDENTIFIER '=' exp
-    | exp OPT exp 
+/* expression */
+exp:  
+    func_exp      {$$ = $1;}
+    | assign_exp  {$$ = $1;}
+    | '(' exp ')'
+    | exp '+' exp 
+    | exp '-' exp 
+    | exp '*' exp
+    | exp '/' exp
     | exp CMP exp
     | IDENTIFIER
     | STR
     | REGEXSTR
     | NUM_INT
-
-exp:  
-    func_exp      {$$ = $1;}
-    | assign_exp  {$$ = $1;}
     ;
 
-func_exp: BUILTIN_FUNC '(' param_list ')' ';' 
+func_exp: BUILTIN_FUNC '(' param_list ')' 
         {$$ = new builtin_func_node($1, $3); }
     ;
 
-rvalue: STR             {$$ = new str_node($1);}
-      | REGEXSTR        {$$ = new regex_str_node($1);}
-      | NUM_INT         {$$ = new int_node($1);}
-
-assign_exp: IDENTIFIER '=' rvalue ';'  {
+assign_exp: IDENTIFIER '=' exp  {
               $$ = new assign_node($1, $3);
           }  
 
