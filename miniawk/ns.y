@@ -77,10 +77,10 @@ explist: /* empty */ {$$ = NULL;}
     ;
 
 
-stmt:
-        FOR IDENTIFIER IN exp
-        | IF '(' exp ')' new_stmts
-        | IF '(' exp ')' new_stmts ELSE new_stmts
+
+stmt:    FOR IDENTIFIER IN explist '{' new_stmts /*  maybe wrong. need fix'}'
+        | IF '(' explist ')' '{' new_stmts '}'
+        | IF '(' explist ')' '{' new_stmts '}' ELSE '{' new_stmts '}'
 
 stmt_list: /* empty */ 
          | stmt_list, stmt
