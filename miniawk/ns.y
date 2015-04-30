@@ -19,8 +19,8 @@ void yyerror(const char *s);
     explist_node*       ast_explist;
     paramter_list_node* ast_param_list;
     func_paramter_node* ast_param;
-    stmt_list_node*     ast_stmts;
-    stmt_node*          ast_stmt;
+    rule_list_node*     ast_rules;
+    rule_node*          ast_rule;
 };
 
 %token  IF ELSE AND OR FOR IN
@@ -36,28 +36,28 @@ void yyerror(const char *s);
 %type <ast_assign>  assign_exp 
 %type <ast_explist> explist
 %type <ast_param_list> param_list
-%type <ast_stmts>   stmt_list
-%type <ast_stmt>    stmt
+%type <ast_rules>   rule_list
+%type <ast_rule>    rule
 
 %start start
 %%
-start: stmt_list { if ($1 != NULL) {
+start: rule_list { if ($1 != NULL) {
                     $1->print();
                     $1->eval();
                     }
                  }
  
-stmt_list: /* empty */ { $$ = NULL; } 
-    | stmt_list stmt   { 
+rule_list: /* empty */ { $$ = NULL; } 
+    | rule_list rule   { 
                             $$ = $1;
                             if ($$ == NULL) {
-                                $$ = new stmt_list_node;
+                                $$ = new rule_list_node;
                             }
                             $$ -> append($2);
                        }
     ;
     
-stmt: pattern '{' explist '}' { $$ = new stmt_node($1, $3); }
+rule: pattern '{' explist '}' { $$ = new rule_node($1, $3); }
     ;
 
 pattern: /* empty */ {$$ = NULL;}
@@ -75,6 +75,25 @@ explist: /* empty */ {$$ = NULL;}
                     $$->append($2);
                   }
     ;
+
+
+stmt:
+        FOR IDENTIFIER IN exp
+        | IF '(' exp ')' new_stmts
+        | IF '(' exp ')' new_stmts ELSE new_stmts
+
+stmt_list: /* empty */ 
+         | stmt_list, stmt
+
+exp:
+    | func '(' explist ')' 
+    | IDENTIFIER '=' exp
+    | exp OPT exp 
+    | exp CMP exp
+    | IDENTIFIER
+    | STR
+    | REGEXSTR
+    | NUM_INT
 
 exp:  
     func_exp      {$$ = $1;}
