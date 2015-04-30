@@ -11,8 +11,8 @@ struct symbol;
 class node {
 public:
     enum {
-        STMT_NODE,
-        STMT_LIST_NODE,
+        RULE_NODE,
+        RULE_LIST_NODE,
         FUNC_PARAM_LIST_NODE,
         FUNC_PARAM_NODE,
         FUNC_NODE,
@@ -89,22 +89,22 @@ public:
     char* regex_str;
 };
 
-class stmt_node : public node {
+class rule_node : public node {
 public:
-    stmt_node(node* p, node* act) 
-            :node(STMT_NODE),
+    rule_node(node* p, node* act) 
+            :node(RULE_NODE),
             pattern(p), 
             action(act) {
         /* do nothing */
     }
     virtual void print() {
-        printf("stmt node: node type=> %d \n", type); 
+        printf("rule node: node type=> %d \n", type); 
         pattern->print();
         action->print();
     }
     
     virtual void eval() {
-        puts("stmt_node\n");
+        puts("rule_node\n");
         pattern->eval();
         action->eval();
     }
@@ -114,31 +114,31 @@ public:
     node* action;
 };
 
-class stmt_list_node : public node {
+class rule_list_node : public node {
 public:
-    stmt_list_node() : node(STMT_LIST_NODE), slist() {
+    rule_list_node() : node(RULE_LIST_NODE), slist() {
     }
     
-    void append(stmt_node *n) {
+    void append(rule_node *n) {
         slist.push_back(n);
     }
 
     void print() {
-        std::list<stmt_node*>::iterator it = slist.begin();
+        std::list<rule_node*>::iterator it = slist.begin();
         for (;it != slist.end(); ++it) {
             (*it)->print();
         }
     }
     
     void eval() {
-        puts("stmt_list_node\n"); 
-        std::list<stmt_node*>::iterator it = slist.begin();
+        puts("rule_list_node\n"); 
+        std::list<rule_node*>::iterator it = slist.begin();
         for (;it != slist.end(); ++it) {
             (*it)->eval();
         }
     }
 public:
-    std::list<stmt_node *> slist; 
+    std::list<rule_node *> slist; 
 };
 
 class exp_node : public node {
