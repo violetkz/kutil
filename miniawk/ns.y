@@ -76,10 +76,16 @@ explist: /* empty */ {$$ = NULL;}
                   }
     ;
 
-stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
+stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'  
+                {  $$ = new stmt_for_in_node($2, $4, $6); }
+        | WHILE '(' exp ')' '{' stmt_list '}'
+                { $$ = new stmt_while_node($3, $6); }
         | IF '(' exp ')' '{' stmt_list '}'
+                { $$ = new stmt_if_node($3, $6); }
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
+                { $$ = new stmt_if_else_node($3, $6, $10); }
         | exp ';'
+                { $$ = new stmt_node($1); }
 
 stmt_list: /* empty */ 
          | stmt_list, stmt
@@ -88,16 +94,16 @@ stmt_list: /* empty */
 exp:  
     func_exp      {$$ = $1;}
     | assign_exp  {$$ = $1;}
-    | '(' exp ')'
-    | exp '+' exp 
-    | exp '-' exp 
-    | exp '*' exp
-    | exp '/' exp
-    | exp CMP exp
-    | IDENTIFIER
-    | STR
-    | REGEXSTR
-    | NUM_INT
+    | '(' exp ')'       { $$ = $2; }
+    | exp '+' exp       { $$ = new operator_node('+', $1, $3); } 
+    | exp '-' exp       { $$ = new operator_node('-', $1, $3); }
+    | exp '*' exp       { $$ = new operator_node('*', $1, $3); }
+    | exp '/' exp       { $$ = new operator_node('/', $1, $3); }
+    | exp CMP exp       { $$ = new compare_node($2, $1, $3);   }
+    | IDENTIFIER        { $$ = new identifer_node($1);         }
+    | STR               { $$ = new str_node($1);               }
+    | REGEXSTR          { $$ = new regex_str_node($1);         }
+    | NUM_INT           { $$ = new int_node($1);               }
     ;
 
 func_exp: BUILTIN_FUNC '(' param_list ')' 
@@ -121,14 +127,13 @@ param_list:  /* empty */ { $$ = NULL;}
         }
     ;
 
-/* delete str_node/int_node, should be as paramter of prarm.
-*  param(int)
-*  param(char *);
-*/
+param: exp { $$ = $1; }
+/*
 param: IDENTIFIER { $$ = new identifer_node($1);}
      | STR        { $$ = new str_node($1);}
      | NUM_INT    { $$ = new int_node($1);}
      ;
+*/
 
 %%
 
