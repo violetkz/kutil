@@ -192,6 +192,24 @@ public:
     node*  rvalue;
 };
 
+class stmt_while_node {
+public:
+    void print();
+    void eval();
+/* FIXME */
+
+};
+
+class stmt_for_in_node {
+public:
+    void print();
+    void eval();
+public:
+    identifer_node  *tmp_id;
+    identifer_node  *id; 
+    stmt_list_node  *stmt;
+};
+#if 0
 class paramter_list_node : public node {
 public:
     paramter_list_node() : node(FUNC_PARAM_LIST_NODE), plist() {
@@ -210,10 +228,11 @@ public:
 public:
     std::list<node*>  plist; 
 };
+#endif
 
 class builtin_func_node : public exp_node {
 public:
-    builtin_func_node(const char *name, paramter_list_node *plist)
+    builtin_func_node(const char *name, explist_node *plist)
                     :exp_node(FUNC_NODE),
                     func_name(name),
                     plist(plist) {
@@ -230,23 +249,9 @@ public:
 
 public:
     const char* func_name;
-    paramter_list_node* plist;
+    explist_node *plist;
 };
 
-
-class func_paramter_node : public node {
-    const char* param_name;
-    
-    func_paramter_node(const char* p)
-            :node(FUNC_PARAM_NODE), param_name(p) {
-        /* do nothing */
-    }
-    
-    void print() {
-        printf("func_paramter_node: node type=> %d, param_name => [%s]\n",
-                    type, param_name);
-    }
-};
 
 /* symbol info */
 struct symbol {

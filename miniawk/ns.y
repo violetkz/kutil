@@ -30,11 +30,11 @@ void yyerror(const char *s);
 %token <sym>    IDENTIFIER
 %token <intval> NUM_INT
 
-%type <ast>         pattern param rvalue
+%type <ast>         pattern 
 %type <ast_exp>     exp
 %type <ast_func>    func_exp 
 %type <ast_assign>  assign_exp 
-%type <ast_explist> explist
+%type <ast_explist> exp_list
 %type <ast_param_list> param_list
 %type <ast_rules>   rule_list
 %type <ast_rule>    rule
@@ -57,7 +57,7 @@ rule_list: /* empty */ { $$ = NULL; }
                        }
     ;
     
-rule: pattern '{' explist '}' { $$ = new rule_node($1, $3); }
+rule: pattern '{' stmt_list '}' { $$ = new rule_node($1, $3); }
     ;
 
 pattern: /* empty */ {$$ = NULL;}
@@ -65,16 +65,6 @@ pattern: /* empty */ {$$ = NULL;}
     | STR       { $$ = new str_node($1);}
     ;
 
-explist: /* empty */ {$$ = NULL;}
-    | explist exp { 
-                    $$  = $1;
-                    if ($$ == NULL) {
-                        $$ = new explist_node;
-                    }
-
-                    $$->append($2);
-                  }
-    ;
 
 stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'  
                 {  $$ = new stmt_for_in_node($2, $4, $6); }
@@ -88,7 +78,7 @@ stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
                 { $$ = new stmt_node($1); }
 
 stmt_list: /* empty */ 
-         | stmt_list, stmt
+         | stmt_list stmt
 
 /* expression */
 exp:  
@@ -106,35 +96,24 @@ exp:
     | NUM_INT           { $$ = new int_node($1);               }
     ;
 
-func_exp: BUILTIN_FUNC '(' param_list ')' 
+exp_list: /* empty */ {$$ = NULL;}
+    | exp_list ',' exp { 
+                    $$  = $1;
+                    if ($$ == NULL) {
+                        $$ = new explist_node;
+                    }
+
+                    $$->append($2);
+                  }
+    ;
+
+func_exp: BUILTIN_FUNC '(' exp_list ')' 
         {$$ = new builtin_func_node($1, $3); }
     ;
 
 assign_exp: IDENTIFIER '=' exp  {
               $$ = new assign_node($1, $3);
           }  
-
-param_list:  /* empty */ { $$ = NULL;} 
-    | param { $$ = new paramter_list_node;
-              $$->append($1);
-            }
-    | param_list ',' param 
-        {   $$ = $1;
-            if ($1 == NULL) {
-                $$ = new paramter_list_node;
-            }
-            $$->append($3);
-        }
-    ;
-
-param: exp { $$ = $1; }
-/*
-param: IDENTIFIER { $$ = new identifer_node($1);}
-     | STR        { $$ = new str_node($1);}
-     | NUM_INT    { $$ = new int_node($1);}
-     ;
-*/
-
 %%
 
 void yyerror(const char *s) {
