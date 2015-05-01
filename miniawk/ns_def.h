@@ -141,27 +141,17 @@ public:
     std::list<rule_node *> slist; 
 };
 
-class exp_node : public node {
-public:
-    exp_node(int n):node(n) {
-        /* do nothing */
-    }
-    void print() {
-        printf("expnode");
-    }
-};
-
 class explist_node : public node {
 public:
     explist_node() : node(EXPLIST_NODE), elist() {
     }
     
-    void append(exp_node *n) {
+    void append(node *n) {
         elist.push_back(n);
     }
 
     void print() {
-        std::list<exp_node*>::iterator it = elist.begin();
+        std::list<node*>::iterator it = elist.begin();
         for (;it != elist.end(); ++it) {
             (*it)->print();
         }
@@ -169,18 +159,18 @@ public:
 
     void eval() {
         puts("explist_node\n");
-        std::list<exp_node*>::iterator it = elist.begin();
+        std::list<node*>::iterator it = elist.begin();
         for (;it != elist.end(); ++it) {
             (*it)->eval();
         }
     }
 public:
-    std::list<exp_node *> elist; 
+    std::list<node *> elist; 
 };
 
-class assign_node : public exp_node {
+class assign_node : public node {
 public:
-    assign_node(symbol *id, node* val):exp_node(ASSIGN_NODE),
+    assign_node(symbol *id, node* val):node(ASSIGN_NODE),
                 variable_name(id), 
                 rvalue(val) {
         /* do nothing */
@@ -194,10 +184,27 @@ public:
 
 class stmt_while_node {
 public:
+    stmt_while_node();
     void print();
     void eval();
-/* FIXME */
+public:
+    node *exp;
+    stmt_list_node *stmts;
+};
 
+class stmt_if_node {
+public:
+    stmt_if_node(node *conditional,
+            stmt_list_node *action);
+    stmt_if_node(node *conditional,
+            stmt_list_node *action,
+            stmt_list_node *else_action)
+    void print();
+    void eval();
+public
+    node *exp;
+    stmt_list_node *stmts;
+    stmt_list_node *else_stmts;
 };
 
 class stmt_for_in_node {
@@ -207,7 +214,29 @@ public:
 public:
     identifer_node  *tmp_id;
     identifer_node  *id; 
-    stmt_list_node  *stmt;
+    stmt_list_node  *stmts;
+};
+
+class operator_node {
+public:
+    operator_node(char opt, 
+            node *l,
+            node *r);
+public:
+    char    opt; 
+    node  *left;
+    node  *right;
+};
+
+class compare_node{
+public:
+    compare_node(int cmp_opt, 
+            node *l,
+            node *r);
+public:
+    int    cmp_opt; 
+    node  *left;
+    node  *right;
 };
 #if 0
 class paramter_list_node : public node {
@@ -230,10 +259,10 @@ public:
 };
 #endif
 
-class builtin_func_node : public exp_node {
+class builtin_func_node : public node {
 public:
     builtin_func_node(const char *name, explist_node *plist)
-                    :exp_node(FUNC_NODE),
+                    :node(FUNC_NODE),
                     func_name(name),
                     plist(plist) {
         /* do nothing */
