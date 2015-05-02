@@ -42,6 +42,16 @@ void yyerror(const char *s);
 %type <ast_rule>    rule
 %type <ast_stmt_list>  stmt_list;
 
+/* Lowest to highest */
+%left OR 
+%left AND 
+%right '='
+/*%left CONCAT_OP */
+%left '+' '-'
+%left '*' '/' 
+/*%right UNARY */
+%nonassoc CMP_GE CMP_LE CMP_LS CMP_EQ CMP_GT
+
 %start start
 %%
 start: rule_list { if ($1 != NULL) {
@@ -79,7 +89,7 @@ stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6, $10); }
         | exp ';'
-                { $$ = $1; }
+                { puts("stmt exp\n"); $$ = $1; }
         /*
         | BREAK ';'
         | CONTINUE ';'
@@ -116,14 +126,22 @@ exp:
     | exp CMP_GE exp    { $$ = new compare_node(CMP_GE, $1, $3); }
     
     | IDENTIFIER        { puts("expression\n"); $$ = new identifer_node($1);         }
-    | STR               { $$ = new str_node($1);               }
-    | REGEXSTR          { $$ = new regex_str_node($1);         }
-    | NUM_INT           { $$ = new int_node($1);               }
+    | STR               { puts("exp str\n");$$ = new str_node($1);               }
+    | REGEXSTR          { puts("exp re\n"); $$ = new regex_str_node($1);         }
+    | NUM_INT           { puts("exp int\n"); $$ = new int_node($1);               }
     ;
 
 exp_list: /* empty */ {$$ = NULL;}
+    | exp             
+                    { 
+                    puts("explit");
+                    $$ = new exp_list_node;
+
+                    $$->append($1);
+                    }
     | exp_list ',' exp 
                     { 
+                    puts("explit");
                     $$  = $1;
                     if ($$ == NULL) {
                         $$ = new exp_list_node;
@@ -138,6 +156,7 @@ func_exp: BUILTIN_FUNC '(' exp_list ')'
     ;
 
 assign_exp: IDENTIFIER '=' exp  {
+          puts("assign_exp\n");
           $$ = new assign_node($1, $3);
         }  
     ;

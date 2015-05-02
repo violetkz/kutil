@@ -2,6 +2,6 @@
     a = 1;
     b = 222;
     d = 2222;
-    print(a,b,d); 
+    print(a,b,d);
 }
 
