@@ -22,7 +22,13 @@ public:
         EXP_NODE, 
         EXPLIST_NODE,
         IDENTIFIER_NODE,
-        NUM_INT_NODE
+        NUM_INT_NODE,
+        STMT_WHILE_NODE,
+        STMT_IF_NODE,
+        STMT_LIST_NODE,
+        STMT_FOR_IN_NODE,
+        OPERATOR_NODE,
+        COMPARE_NODE
     };
     
     node(int t) : type(t) {}
@@ -32,7 +38,7 @@ public:
     virtual void print() {}
     
     /* eval */
-    virtual void eval() {}
+    virtual node *eval() {return NULL;}
     
 public:
     int type;
@@ -40,14 +46,12 @@ public:
 
 class identifer_node : public node {
 public:
-    identifer_node(symbol* s) : node(IDENTIFIER_NODE), sym(s) {
+    identifer_node(symbol *s) : node(IDENTIFIER_NODE), sym(s) {
         /* do nothing */
     }
-    void print() {
-        printf("identifer_node: type => %d \n", type );
-    }
+    void print();
 public:
-    symbol* sym;
+    symbol *sym;
 };
 
 /* string node */
@@ -56,9 +60,7 @@ public:
     int_node(int n) : node(NUM_INT_NODE), i(n) {
         /* do nothing */
     }
-    virtual void print() {
-        printf("str node: node type=> %d, s => %d\n", type, i); 
-    }
+    void print();
 public:
     int i;
 };
@@ -66,182 +68,101 @@ public:
 /* string node */
 class str_node : public node {
 public:
-    str_node(char* s) : node(STR_NODE), str(s) {
+    str_node(char *s) : node(STR_NODE), str(s) {
         /* do nothing */
     }
-    virtual void print() {
-        printf("str node: node type=> %d, s => %s\n", type, str); 
-    }
+    virtual void print();
 public:
-    char* str;
+    char *str;
 };
 
 class regex_str_node : public node {
 public:
-    regex_str_node(char* str):node(REGEX_STR_NODE), regex_str(str) {
+    regex_str_node(char *str)
+        :node(REGEX_STR_NODE), regex_str(str) {
         /* do nothing */  
     }
-    virtual void print() {
-        printf("str node: node type=> %d, s => %s\n", type, regex_str); 
-    }
+    void print();
 
 public:
-    char* regex_str;
+    char *regex_str;
 };
 
 class rule_node : public node {
 public:
-    rule_node(node* p, node* act) 
+    rule_node(node *p, node *act) 
             :node(RULE_NODE),
             pattern(p), 
             action(act) {
         /* do nothing */
     }
-    virtual void print() {
-        printf("rule node: node type=> %d \n", type); 
-        pattern->print();
-        action->print();
-    }
-    
-    virtual void eval() {
-        puts("rule_node\n");
-        pattern->eval();
-        action->eval();
-    }
+    void print();    
+    virtual node *eval(); 
 
 public:
-    node* pattern;
-    node* action;
+    node *pattern;
+    node *action;
 };
+
+#if 0
+template <class T> base_list_node : public node {
+public:
+    base_list_node(int type) : node(t);
+    void append(T *n){};
+public:
+    std::list<T *> list_;
+};
+#endif
 
 class rule_list_node : public node {
 public:
     rule_list_node() : node(RULE_LIST_NODE), slist() {
     }
     
-    void append(rule_node *n) {
+    inline void append(rule_node *n) {
         slist.push_back(n);
     }
 
-    void print() {
-        std::list<rule_node*>::iterator it = slist.begin();
-        for (;it != slist.end(); ++it) {
-            (*it)->print();
-        }
-    }
-    
-    void eval() {
-        puts("rule_list_node\n"); 
-        std::list<rule_node*>::iterator it = slist.begin();
-        for (;it != slist.end(); ++it) {
-            (*it)->eval();
-        }
-    }
+    void print();
+    node *eval(); 
 public:
     std::list<rule_node *> slist; 
 };
 
-class explist_node : public node {
+class exp_list_node : public node {
 public:
-    explist_node() : node(EXPLIST_NODE), elist() {
+    exp_list_node() : node(EXPLIST_NODE), elist() {
     }
     
-    void append(node *n) {
+    inline void append(node *n) {
         elist.push_back(n);
     }
 
-    void print() {
-        std::list<node*>::iterator it = elist.begin();
-        for (;it != elist.end(); ++it) {
-            (*it)->print();
-        }
-    }
-
-    void eval() {
-        puts("explist_node\n");
-        std::list<node*>::iterator it = elist.begin();
-        for (;it != elist.end(); ++it) {
-            (*it)->eval();
-        }
-    }
+    void print(); 
+    node *eval(); 
 public:
     std::list<node *> elist; 
 };
 
 class assign_node : public node {
 public:
-    assign_node(symbol *id, node* val):node(ASSIGN_NODE),
-                variable_name(id), 
-                rvalue(val) {
+    assign_node(symbol *id, node *val)
+            : node(ASSIGN_NODE),
+             variable_name(id), 
+             rvalue(val) {
         /* do nothing */
     }
-    void eval();
+    node *eval();
 
 public:
-    symbol* variable_name;
-    node*  rvalue;
+    symbol *variable_name;
+    node *rvalue;
 };
 
-class stmt_while_node {
-public:
-    stmt_while_node();
-    void print();
-    void eval();
-public:
-    node *exp;
-    stmt_list_node *stmts;
-};
 
-class stmt_if_node {
+class stmt_list_node : public node {
 public:
-    stmt_if_node(node *conditional,
-            stmt_list_node *action);
-    stmt_if_node(node *conditional,
-            stmt_list_node *action,
-            stmt_list_node *else_action)
-    void print();
-    void eval();
-public
-    node *exp;
-    stmt_list_node *stmts;
-    stmt_list_node *else_stmts;
-};
-
-class stmt_for_in_node {
-public:
-    void print();
-    void eval();
-public:
-    identifer_node  *tmp_id;
-    identifer_node  *id; 
-    stmt_list_node  *stmts;
-};
-
-class operator_node {
-public:
-    operator_node(char opt, 
-            node *l,
-            node *r);
-public:
-    char    opt; 
-    node  *left;
-    node  *right;
-};
-
-class compare_node{
-public:
-    compare_node(int cmp_opt, 
-            node *l,
-            node *r);
-public:
-    int    cmp_opt; 
-    node  *left;
-    node  *right;
-};
-#if 0
-class paramter_list_node : public node {
-public:
-    paramter_list_node() : node(FUNC_PARAM_LIST_NODE), plist() {
+    stmt_list_node() : node(STMT_LIST_NODE), plist() {
         /* do nothing */
     }
     void append(node *n) {
@@ -257,29 +178,94 @@ public:
 public:
     std::list<node*>  plist; 
 };
-#endif
+
+class stmt_while_node : public node {
+public:
+    stmt_while_node(node *condition, stmt_list_node *stmt_list) 
+        :node(STMT_WHILE_NODE), condition_exp(condition), stmts(stmt_list) {
+    }
+    void print();
+    node *eval();
+public:
+    node *condition_exp;
+    stmt_list_node *stmts;
+};
+
+class stmt_if_node : public node {
+public:
+    stmt_if_node(node *condition, stmt_list_node *action) 
+        : node(STMT_IF_NODE), condition_exp(condition), stmts(action), else_stmts(NULL) {
+     }
+
+    stmt_if_node(node *condition,
+            stmt_list_node *action,
+            stmt_list_node *else_action)
+        : node(STMT_IF_NODE), condition_exp(condition), stmts(action), else_stmts(else_action) {
+     }
+
+    void print();
+    node *eval();
+public:
+    node *condition_exp;
+    stmt_list_node *stmts;
+    stmt_list_node *else_stmts;
+};
+
+class stmt_for_in_node : public node {
+public:
+    stmt_for_in_node(symbol *tmp, symbol *ln, stmt_list_node *stmt_list)
+        : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
+    }
+    void print();
+    node *eval();
+public:
+    symbol  *tmp_id;
+    symbol  *id; 
+    stmt_list_node  *stmts;
+};
+
+class operator_node : public node {
+public:
+    operator_node(char opt, node *l, node *r) 
+        : node(OPERATOR_NODE), opt(opt), left(l), right(r) {
+    }
+
+public:
+    char    opt; 
+    node  *left;
+    node  *right;
+};
+
+class compare_node : public node {
+public:
+    compare_node(int opt, node *l, node *r) 
+        : node(COMPARE_NODE), cmp_opt(opt), left(l), right(r) {
+    }
+
+public:
+    int    cmp_opt; 
+    node  *left;
+    node  *right;
+};
+
 
 class builtin_func_node : public node {
 public:
-    builtin_func_node(const char *name, explist_node *plist)
+    builtin_func_node(const char *name, exp_list_node *plist)
                     :node(FUNC_NODE),
                     func_name(name),
                     plist(plist) {
         /* do nothing */
     }
     
-    void print() {
-        printf("func node: node type=> %d, funcname %s\n",
-                type, func_name);     
-        plist->print();
-    }
-
-    void eval();
+    void print(); 
+    node *eval();
 
 public:
-    const char* func_name;
-    explist_node *plist;
+    const char *func_name;
+    exp_list_node *plist;
 };
+
 
 
 /* symbol info */
@@ -289,11 +275,11 @@ struct symbol {
     union {
         int     int_val;
         char    *chr_val;
-        std::string     str;
+        /*std::string     str; */
         node    *node_val;
     };
 };
 
-symbol* install_symbol(char *name);
+symbol *install_symbol(char *name);
 
 #endif //~NS_DEF_H____
