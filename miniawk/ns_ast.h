@@ -5,6 +5,8 @@
 #include <list>
 #include <string>
 
+#include "ns_value.h"
+
 struct symbol;
 
 /* the base class to present AST node */
@@ -38,7 +40,7 @@ public:
     virtual void print() {}
     
     /* eval */
-    virtual node *eval() {return NULL;}
+    virtual ns_value *eval() {return NULL;}
     
 public:
     int type;
@@ -97,7 +99,7 @@ public:
         /* do nothing */
     }
     void print();    
-    virtual node *eval(); 
+    virtual ns_value *eval(); 
 
 public:
     node *pattern;
@@ -124,7 +126,7 @@ public:
     }
 
     void print();
-    node *eval(); 
+    ns_value *eval(); 
 public:
     std::list<rule_node *> slist; 
 };
@@ -139,7 +141,7 @@ public:
     }
 
     void print(); 
-    node *eval(); 
+    ns_value *eval(); 
 public:
     std::list<node *> elist; 
 };
@@ -152,7 +154,7 @@ public:
              rvalue(val) {
         /* do nothing */
     }
-    node *eval();
+    ns_value *eval();
 
 public:
     symbol *variable_name;
@@ -185,7 +187,7 @@ public:
         :node(STMT_WHILE_NODE), condition_exp(condition), stmts(stmt_list) {
     }
     void print();
-    node *eval();
+    ns_value *eval();
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -204,7 +206,7 @@ public:
      }
 
     void print();
-    node *eval();
+    ns_value *eval();
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -217,7 +219,7 @@ public:
         : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
     }
     void print();
-    node *eval();
+    ns_value *eval();
 public:
     symbol  *tmp_id;
     symbol  *id; 
@@ -259,7 +261,7 @@ public:
     }
     
     void print(); 
-    node *eval();
+    ns_value *eval();
 
 public:
     const char *func_name;
@@ -268,18 +270,5 @@ public:
 
 
 
-/* symbol info */
-struct symbol {
-    std::string id;
-    int type;
-    union {
-        int     int_val;
-        char    *chr_val;
-        /*std::string     str; */
-        node    *node_val;
-    };
-};
-
-symbol *install_symbol(char *name);
 
 #endif //~NS_DEF_H____

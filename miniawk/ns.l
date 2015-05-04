@@ -1,7 +1,7 @@
 %option noyywrap nodefault yylineno
 %{
 
-#include "ns_def.h"
+#include "ns_ast.h"
 #include "ns.tab.h"
 extern void yyerror(const char *s);
 

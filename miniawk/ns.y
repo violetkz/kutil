@@ -1,6 +1,6 @@
 %{
 #include <stdio.h>
-#include "ns_def.h"
+#include "ns_ast.h"
 int yylex(void); 
 void yyerror(const char *s);
 

@@ -4,10 +4,9 @@
 #include <cstring>
 #include <map>
 #include <string>
-#include "ns_def.h"
+#include "ns_ast.h"
 
 extern void free_strval(char*);
-
 
 void identifer_node::print() {
     printf("identifer_node: type => %d \n", type );
@@ -32,7 +31,7 @@ void rule_node::print() {
     action->print();
 }
 
-node *rule_node::eval() {
+ns_value *rule_node::eval() {
     puts("rule_node\n");
     pattern->eval();
     action->eval();
@@ -47,7 +46,7 @@ void rule_list_node::print() {
     }
 }
 
-node *rule_list_node::eval() {
+ns_value *rule_list_node::eval() {
     puts("rule_list_node\n"); 
     std::list<rule_node*>::iterator it = slist.begin();
     for (;it != slist.end(); ++it) {
@@ -64,7 +63,7 @@ void exp_list_node::print() {
     }
 }
 
-node *exp_list_node::eval() {
+ns_value *exp_list_node::eval() {
     puts("exp_list_node\n");
     std::list<node*>::iterator it = elist.begin();
     for (;it != elist.end(); ++it) {
@@ -80,7 +79,7 @@ void builtin_func_node::print() {
     plist->print();
 }
 
-node *assign_node::eval() {
+ns_value *assign_node::eval() {
     puts("assign_node\n");
     assert(rvalue != NULL);
     int type = rvalue->type;
@@ -115,7 +114,7 @@ node *assign_node::eval() {
     return NULL;
 }
 
-node *builtin_func_node::eval() {
+ns_value *builtin_func_node::eval() {
     puts("builtin_func_node\n");
     /* FIXME: just for tesint */
     if (strcmp(func_name, "print") == 0) {
@@ -154,7 +153,7 @@ node *builtin_func_node::eval() {
 void stmt_if_node::print() {
     printf("stmt_if_node\n");
 }
-node *stmt_if_node::eval() {
+ns_value *stmt_if_node::eval() {
     // FIXME
     return NULL;
 }
@@ -162,7 +161,7 @@ node *stmt_if_node::eval() {
 void stmt_while_node::print() {
     printf("stmt_if_node\n");
 }
-node *stmt_while_node::eval() {
+ns_value *stmt_while_node::eval() {
     // FIXME
     return NULL;
 }
@@ -170,48 +169,8 @@ node *stmt_while_node::eval() {
 void stmt_for_in_node::print() {
     printf("stmt_if_node\n");
 }
-node *stmt_for_in_node::eval() {
+ns_value *stmt_for_in_node::eval() {
     // FIXME
     return NULL;
 }
 
-class ns_symtbl {
-    public:
-        /* symbol table */
-        typedef std::map<std::string, symbol*> symtbl;
-        typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
-
-    public:
-        static ns_symtbl::symtbl *get_tbl() {
-            if (tbl == NULL) {
-                tbl = new ns_symtbl::symtbl;
-            }
-            return tbl;
-        }
-
-    private:
-        static symtbl *tbl;
-};
-
-ns_symtbl::symtbl *ns_symtbl::tbl = NULL;
-
-symbol *install_symbol(char *name) {
-    ns_symtbl::symtbl *tbl = ns_symtbl::get_tbl();
-
-    std::string id(name);
-    ns_symtbl::symtbl_iterator it = tbl->find(id);
-
-    /* if not existed, create new item */
-    symbol *n = NULL;
-    if (it == tbl->end()) { 
-        n = new symbol;
-        n->id = id;
-        (*tbl)[id] = n;
-        printf("-debug-: install symbol=> %s\n", name);
-    }
-    else {
-        n = (*tbl)[id];
-        printf("-debug-: found symbol => %s\n", name);    
-    }
-    return n;
-}
