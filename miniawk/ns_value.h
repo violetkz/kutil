@@ -9,6 +9,7 @@ enum ns_value_type {
     NSVAL_UNINITIALIZED,    /* un-initialized */
     NSVAL_ILLEGAL           /* illegal */
 };
+
 struct ns_value {
     ns_value_type type;
     union {
@@ -25,20 +26,9 @@ struct ns_value {
     ns_value(ns_value_type t) : type(t), int_val(0) {}
 };
 
-/* helper function.  
- * make a ns_value with illegal status used for expression eval
- * FIXME: I suppose  here using 'static const'  
- */
-ns_value make_illegal_value {
-    ns_value illegal;
-    ns_value.type = NSVAL_ILLEGAL;
-    return illegal;
-}
-
 const ns_value operator+ (const ns_value &l, const ns_value &r);
 const ns_value operator- (const ns_value &l, const ns_value &r);
 const ns_value operator* (const ns_value &l, const ns_value &r);
 const ns_value operator/ (const ns_value &l, const ns_value &r);
-
 
 #endif  //~ns_value_h___
