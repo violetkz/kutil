@@ -52,6 +52,7 @@ public:
         /* do nothing */
     }
     void print();
+    ns_value *eval();
 public:
     symbol *sym;
 };
@@ -63,6 +64,7 @@ public:
         /* do nothing */
     }
     void print();
+    ns_value *eval();
 public:
     int i;
 };
@@ -74,6 +76,7 @@ public:
         /* do nothing */
     }
     virtual void print();
+    ns_value *eval();
 public:
     char *str;
 };
@@ -99,7 +102,7 @@ public:
         /* do nothing */
     }
     void print();    
-    virtual ns_value *eval(); 
+    ns_value *eval(); 
 
 public:
     node *pattern;

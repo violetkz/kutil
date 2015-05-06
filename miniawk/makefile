@@ -1,11 +1,6 @@
+CPPFLAGS=-g -Wall
 
-all: lextest ns
-
-lextest: lextest_src
-	gcc -g -o lextest miniawk_lex.c
-
-lextest_src: miniawk.l
-	flex -o miniawk_lex.c miniawk.l
+all: ns
 
 ns: ns.y ns.l ns_ast.h ns_ast.cpp
 	bison -t -d ns.y 
@@ -14,9 +9,13 @@ ns: ns.y ns.l ns_ast.h ns_ast.cpp
 	#mv ns.tab.c ns.tab.cpp
 	g++ -g -o ns ns.tab.c ns_lex.cpp ns_ast.cpp
 
-ut_ns_value: ut_ns_value.cpp ns_value.cpp ns_string.cpp
-	g++ -g -o ut_ns_value ut_ns_value.cpp ns_value.cpp ns_string.cpp
+ut_value: ut_ns_value.o ns_value.o
+	g++ -g -o ut_value $^ 
+
+ns_value.o: ns_value.h ns_value.cpp
+
+ut_ns_value.o: ut_ns_value.cpp
 
 clean:
-	rm -rf *.o *.exe  *.out *.dSYM ns lextest ns.tab.c ns.tab.cpp ns.tab.h ns_lex.c ns_lex.cpp *.stackdump
+	rm -rf *.o *.exe  *.out *.dSYM ns lextest ns.tab.c ns.tab.cpp ns.tab.h ns_lex.c ns_lex.cpp *.stackdump ut_value
 

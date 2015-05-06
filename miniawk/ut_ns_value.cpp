@@ -16,11 +16,6 @@ void constructor_test () {
 }
 
 void assign_test() {
-    ns_value ns(99);
-    ns_value nx; 
-    
-    nx = ns;    std::cout << nx;
-
     ns_value nss("assign_test-----");
     ns_value nss_1 = "initialized string";
     ns_value nss_2 = nss;
@@ -28,13 +23,51 @@ void assign_test() {
     ns_value nss_4 = nss_2;
     nss_2 = nss;
 
-    ns_value *nvp = new ns_value("1234567890");
+    nss_4 = nss_1 = nss_2 = nss_4;
+    std::cout << nss_4;
+}
+
+void assign_test1() {
+    ns_value nss("assign_test-----");
+    ns_value nint = 9999;
     
-    std::cout << *nvp ;
-    delete nvp;
+    nss = nint;
+    std::cout << nss;
+    
+    nss = "string";
+    nint = true;
+    
+    nss  = nint;
+    std::cout << nss;
+
+    ns_value n1,n2,n3,n4;
+    n1 = false;
+    n2 = "string";
+    n4 = NSVAL_ILLEGAL;
+    
+    n4 = n2 = n1;
+    std::cout << n4;
+}
+
+void opt_test() {
+    ns_value ns = 9;
+    ns_value ns1 = 10000;
+    
+    std::cout << ns * ns1;
+    
+    ns = "99999";
+    ns1 = "--0000";
+    ns_value ns3 = "!!";
+    std::cout << ns + ns1 + ns3 + ns1;
+
+    ns = true;
+    ns1 = 9;
+    std::cout << ns + ns1;
 }
 
 int main() {
-    constructor_test();
+//    constructor_test();
     assign_test();
+    assign_test1();
+    opt_test();
 }

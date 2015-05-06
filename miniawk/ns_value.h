@@ -25,27 +25,31 @@ public:
     };
 
 public: 
-    ns_value() : type(NSVAL_UNINITIALIZED), int_val(0) {}
+    ns_value() : type(NSVAL_UNINITIALIZED), int_val(0), ref_count(0) {}
     ns_value(const ns_value& n);
     ~ns_value();
 
     ns_value &operator = (const ns_value &s);
 
-    ns_value(int v) : type(NSVAL_INTEGER), int_val(v) {}
-    ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) {}
+    ns_value(int v) : type(NSVAL_INTEGER), int_val(v) ,ref_count(0){}
+    ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) ,ref_count(0){}
     ns_value(const char *s);
-    ns_value(ns_value_type t) : type(t), int_val(0) {}
+    ns_value(ns_value_type t) : type(t), int_val(0) ,ref_count(0){}
 
-    inline int count() const {return *ref_count; }
+    inline int count() const {return *ref_count;}
 
 private:
-    inline void add_ref() { *ref_count++; }
+    inline void add_ref() { 
+        (*ref_count)++;
+        if (type == NSVAL_LITERAL_STR ) {
+            std::cout <<"add_ref "<< *chr_val << "|" << *ref_count << std::endl;
+        }
+    }
     inline void release();
 private:
     int *ref_count;
 };
 
-//const ns_value &operator = (const ns_value &l, const ns_value &r);
 std::ostream &operator << (std::ostream &out, const ns_value &v);
 const ns_value operator+ (const ns_value &l, const ns_value &r);
 const ns_value operator- (const ns_value &l, const ns_value &r);

@@ -8,12 +8,24 @@
 
 extern void free_strval(char*);
 
+ns_value identifer_node::eval() {
+    return s->value;
+}
+
 void identifer_node::print() {
     printf("identifer_node: type => %d \n", type );
 }
 
+ns_value int_node::eval() {
+    return ns_value(i);
+}
+
 void int_node::print() {
     printf("int node: node type=> %d, s => %d\n", type, i); 
+}
+
+ns_value int_node::eval() {
+    
 }
 
 void str_node::print() {
