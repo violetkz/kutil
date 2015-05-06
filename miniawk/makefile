@@ -14,6 +14,9 @@ ns: ns.y ns.l ns_ast.h ns_ast.cpp
 	#mv ns.tab.c ns.tab.cpp
 	g++ -g -o ns ns.tab.c ns_lex.cpp ns_ast.cpp
 
+ut_ns_value: ut_ns_value.cpp ns_value.cpp ns_string.cpp
+	g++ -g -o ut_ns_value ut_ns_value.cpp ns_value.cpp ns_string.cpp
+
 clean:
 	rm -rf *.o *.exe  *.out *.dSYM ns lextest ns.tab.c ns.tab.cpp ns.tab.h ns_lex.c ns_lex.cpp *.stackdump
 
