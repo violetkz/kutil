@@ -1,7 +1,6 @@
 #ifndef ns_value_h___
 #define ns_value_h___
 
-#include "ns_string.h"
 #include <iostream>
 
 enum ns_value_type {

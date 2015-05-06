@@ -1,4 +1,3 @@
-
 #include "ns_value.h"
 
 void ns_value::release() { 
@@ -20,7 +19,8 @@ ns_value::~ns_value() {
 ns_value::ns_value(const char *s) : type(NSVAL_LITERAL_STR), chr_val(NULL) {
     if (s) {
         chr_val = new std::string(s); 
-        ref_count = new int(1);
+        ref_count = new int;
+        *ref_count = 1;
     }
 }
 
