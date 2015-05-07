@@ -9,7 +9,10 @@
 
 extern void free_strval(char*);
 
+#define _t_  printf("%s:[%d]\n",__func__,__LINE__)
+
 ns_value identifer_node::eval() {
+    _t_; 
     return sym->value;
 }
 
@@ -18,6 +21,7 @@ void identifer_node::print() {
 }
 
 ns_value int_node::eval() {
+    _t_; 
     return ns_value(i);
 }
 
@@ -26,6 +30,7 @@ void int_node::print() {
 }
 
 ns_value str_node::eval() {
+    _t_; 
    return ns_value(str); 
 }
 
@@ -45,7 +50,7 @@ void rule_node::print() {
 }
 
 ns_value rule_node::eval() {
-    puts("rule_node\n");
+    _t_; 
     pattern->eval();
     action->eval();
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
@@ -60,7 +65,7 @@ void rule_list_node::print() {
 }
 
 ns_value rule_list_node::eval() {
-    puts("rule_list_node\n"); 
+    _t_; 
     std::list<rule_node*>::iterator it = slist.begin();
     for (;it != slist.end(); ++it) {
         (*it)->eval();
@@ -77,7 +82,7 @@ void exp_list_node::print() {
 }
 
 ns_value exp_list_node::eval() {
-    puts("exp_list_node\n");
+    _t_;
     std::list<node*>::iterator it = elist.begin();
     for (;it != elist.end(); ++it) {
         (*it)->eval();
@@ -94,6 +99,7 @@ void builtin_func_node::print() {
 
 ns_value assign_node::eval() {
 
+    _t_;
     variable_name->value = rvalue->eval();
 
     return variable_name->value;
@@ -136,15 +142,16 @@ ns_value assign_node::eval() {
 
 ns_value builtin_func_node::eval() {
 
-if (strcmp(func_name, "print") == 0) {
-    
-    std::list<node*>& pl = plist->elist;
-    std::list<node*>::iterator it = pl.begin();
+    _t_;
+    if (strcmp(func_name, "print") == 0) {
 
-    for(; it != pl.end(); ++it) {
-        std::cout << (*it)->eval();
+        std::list<node*>& pl = plist->elist;
+        std::list<node*>::iterator it = pl.begin();
+
+        for(; it != pl.end(); ++it) {
+            std::cout << (*it)->eval();
+        }
     }
-}
 #if 0
     puts("builtin_func_node\n");
     /* FIXME: just for tesint */
@@ -188,6 +195,7 @@ void stmt_if_node::print() {
 
 ns_value stmt_if_node::eval() {
     // FIXME
+    _t_;
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
@@ -197,6 +205,7 @@ void stmt_while_node::print() {
 
 ns_value stmt_while_node::eval() {
     // FIXME
+    _t_;
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
@@ -206,11 +215,13 @@ void stmt_for_in_node::print() {
 
 ns_value stmt_for_in_node::eval() {
     // FIXME
+    _t_;
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 
 ns_value operator_node::eval() {
+    _t_;
     ns_value l = left->eval();
     ns_value r = right->eval();
     ns_value n;
@@ -233,6 +244,7 @@ ns_value operator_node::eval() {
 
 ns_value compare_node::eval() {
     
+    _t_;
     ns_value l = left->eval();
     ns_value r = right->eval();
 
@@ -242,6 +254,7 @@ ns_value compare_node::eval() {
 }
 
 ns_value stmt_list_node::eval() {
+    _t_;
     std::list<node*>::iterator it = plist.begin();
     for (;it != plist.end(); ++it) {
         (*it)->eval();

@@ -8,6 +8,8 @@
 struct symbol {
     std::string id;
     ns_value    value;
+    
+    symbol():id(), value() {}
 };
 
 symbol *install_symbol(const char *name);

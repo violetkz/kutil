@@ -40,7 +40,10 @@ public:
     virtual void print() {}
     
     /* eval */
-    virtual ns_value eval() { return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    virtual ns_value eval() { //return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value n(0);
+    return n;
+    }
     
 public:
     int type;

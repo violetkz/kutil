@@ -6,8 +6,8 @@
     b = 999*999;
     str = "hello";
     s2  = "world!";
+    print(a,b,d);
     
     x = str + s2;
-    print(a,b,d);
     print(x);
 }
