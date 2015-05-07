@@ -1,7 +1,8 @@
 #include "ns_value.h"
 
 void ns_value::release() { 
-
+    std::cout << "-->type:" <<  type << std::endl;
+    std::cout << "-->ref_count:" <<  ref_count << std::endl;
     if (type == NSVAL_LITERAL_STR &&  ref_count  ) {
         std::cout << "release "<< *chr_val << "|" << *ref_count << std::endl;
         if (*ref_count == 1) {
@@ -40,13 +41,15 @@ ns_value::ns_value(const ns_value &s) {
     
     std::cout << __func__ << __LINE__ << std::endl;
     
+    std::cout << "-->type:" <<  type << std::endl;
+    std::cout << "-->ref_count:" <<  ref_count << std::endl;
     std::cout << "type:" <<  s.type << std::endl;
     std::cout << "ref_count:" <<  s.ref_count << std::endl;
     
     type      = s.type;
     ref_count = s.ref_count;
 
-    if (type == NSVAL_LITERAL_STR && ref_count > 0) {
+    if (type == NSVAL_LITERAL_STR) {
         chr_val  = s.chr_val;
         std::cout << __func__ << __LINE__ << std::endl;
         add_ref();
@@ -60,6 +63,12 @@ ns_value &ns_value::operator = (const ns_value &s) {
     if (&s == this) return *this;
 
     std::cout <<  __func__ <<"--<<---:"<< __LINE__ << std::endl;
+    std::cout << "#-->type:" <<  type << std::endl;
+    std::cout << "#-->ref_count:" <<  ref_count << std::endl;
+    std::cout << "#type:" <<  s.type << std::endl;
+    std::cout << "#ref_count:" <<  s.ref_count << std::endl;
+    if (s.type == NSVAL_LITERAL_STR)
+        std::cout << "#chr_val:" <<  *s.chr_val << std::endl;
     release();
     
     type      = s.type;
@@ -115,6 +124,7 @@ ns_value operator+ (const ns_value &l, const ns_value &r) {
             std::string tmp = *l.chr_val + *r.chr_val;
             return  ns_value(tmp.c_str());
         }
+        return ns_value(NSVAL_ILLEGAL);
     }
     return ns_value(NSVAL_ILLEGAL);
 }

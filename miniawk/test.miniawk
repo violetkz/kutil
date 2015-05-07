@@ -1,13 +1,12 @@
 "string" { 
-    a = 1;
-    b = 222;
     d = 2222;
     a = b = d;
-    b = 999*999;
-    str = "hello";
-    s2  = "world!";
-    print(a,b,d);
+    #b = 999*999;
+
+    s2  = "world";
+    str = "hello"; #test
     
-    x = str + s2;
     print(x);
+    x = s2 + str;
+    print(a,b,d);
 }

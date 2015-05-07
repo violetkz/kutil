@@ -12,6 +12,7 @@ char *makebuffer(size_t n);
 %}
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
+#.*\n      ;   /* skip comments */
 
 "if"    { return IF;  } 
 "else"  { return ELSE;}

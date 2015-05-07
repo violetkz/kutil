@@ -4,13 +4,13 @@
 #include <iostream>
 
 enum ns_value_type {
-    NSVAL_INTEGER,          /* integer */
-    NSVAL_LITERAL_STR,      /* literal string */
-    NSVAL_BOOLEAN,          /* boolean */
-    NSVAL_EXPERESS_AST,     /* expression  */
-    NSVAL_UNINITIALIZED,    /* uninitialized */
-    NSVAL_ILLEGAL,          /* illegal */
-    NSVAL_STATUS            /* stmt stauts */
+    NSVAL_INTEGER       = 0, /* integer */
+    NSVAL_LITERAL_STR   = 1, /* literal string */
+    NSVAL_BOOLEAN       = 2, /* boolean */
+    NSVAL_EXPERESS_AST  = 3, /* expression  */
+    NSVAL_UNINITIALIZED = 4, /* uninitialized */
+    NSVAL_ILLEGAL       = 5, /* illegal */
+    NSVAL_STATUS        = 6  /* stmt stauts */
 };
 
 enum ns_status_type {
