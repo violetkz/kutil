@@ -3,6 +3,8 @@
 
 #include "ns_ast.h"
 #include "ns.tab.h"
+#include "ns_symtbl.h"
+
 extern void yyerror(const char *s);
 
 char *makebuffer(size_t n);
@@ -81,6 +83,9 @@ char *makebuffer(size_t n);
 "{" |
 "}" |
 ")" |
+"+" |
+"-" |
+"*" |
 "("         {return yytext[0]; }
 
 

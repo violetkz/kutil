@@ -5,11 +5,12 @@
 #include <map>
 #include <string>
 #include "ns_ast.h"
+#include "ns_symtbl.h"
 
 extern void free_strval(char*);
 
 ns_value identifer_node::eval() {
-    return s->value;
+    return sym->value;
 }
 
 void identifer_node::print() {
@@ -24,8 +25,8 @@ void int_node::print() {
     printf("int node: node type=> %d, s => %d\n", type, i); 
 }
 
-ns_value int_node::eval() {
-    
+ns_value str_node::eval() {
+   return ns_value(str); 
 }
 
 void str_node::print() {
@@ -43,11 +44,11 @@ void rule_node::print() {
     action->print();
 }
 
-ns_value *rule_node::eval() {
+ns_value rule_node::eval() {
     puts("rule_node\n");
     pattern->eval();
     action->eval();
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 /* rule list node  */
@@ -58,13 +59,13 @@ void rule_list_node::print() {
     }
 }
 
-ns_value *rule_list_node::eval() {
+ns_value rule_list_node::eval() {
     puts("rule_list_node\n"); 
     std::list<rule_node*>::iterator it = slist.begin();
     for (;it != slist.end(); ++it) {
         (*it)->eval();
     }
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 /* exp_list_node */
@@ -75,13 +76,13 @@ void exp_list_node::print() {
     }
 }
 
-ns_value *exp_list_node::eval() {
+ns_value exp_list_node::eval() {
     puts("exp_list_node\n");
     std::list<node*>::iterator it = elist.begin();
     for (;it != elist.end(); ++it) {
         (*it)->eval();
     }
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 /* builtin function node */
@@ -91,7 +92,13 @@ void builtin_func_node::print() {
     plist->print();
 }
 
-ns_value *assign_node::eval() {
+ns_value assign_node::eval() {
+
+    variable_name->value = rvalue->eval();
+
+    return variable_name->value;
+    
+#if 0
     puts("assign_node\n");
     assert(rvalue != NULL);
     int type = rvalue->type;
@@ -124,9 +131,21 @@ ns_value *assign_node::eval() {
             break;
     };
     return NULL;
+#endif
 }
 
-ns_value *builtin_func_node::eval() {
+ns_value builtin_func_node::eval() {
+
+if (strcmp(func_name, "print") == 0) {
+    
+    std::list<node*>& pl = plist->elist;
+    std::list<node*>::iterator it = pl.begin();
+
+    for(; it != pl.end(); ++it) {
+        std::cout << (*it)->eval();
+    }
+}
+#if 0
     puts("builtin_func_node\n");
     /* FIXME: just for tesint */
     if (strcmp(func_name, "print") == 0) {
@@ -159,30 +178,73 @@ ns_value *builtin_func_node::eval() {
         }
     }
     return NULL;
+#endif
 }
 
 /* if statment */
 void stmt_if_node::print() {
     printf("stmt_if_node\n");
 }
-ns_value *stmt_if_node::eval() {
+
+ns_value stmt_if_node::eval() {
     // FIXME
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 void stmt_while_node::print() {
     printf("stmt_if_node\n");
 }
-ns_value *stmt_while_node::eval() {
+
+ns_value stmt_while_node::eval() {
     // FIXME
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 void stmt_for_in_node::print() {
     printf("stmt_if_node\n");
 }
-ns_value *stmt_for_in_node::eval() {
+
+ns_value stmt_for_in_node::eval() {
     // FIXME
-    return NULL;
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
+
+ns_value operator_node::eval() {
+    ns_value l = left->eval();
+    ns_value r = right->eval();
+    ns_value n;
+    switch (opt) {
+        case '+':  n = l + r; 
+                   break;
+        case '-':  n = l - r;
+                   break;
+        case '*':  n = l * r;
+                   break;
+        case '/':  n = l / r;
+                   break;
+        default:
+                   n = ns_value(NSVAL_ILLEGAL);
+                   fprintf(stderr, "* error *: un-defined operator: %c\n", opt);
+                   break;
+    }
+    return n;
+}
+
+ns_value compare_node::eval() {
+    
+    ns_value l = left->eval();
+    ns_value r = right->eval();
+
+    //FIXME
+    //
+    return ns_value(false);
+}
+
+ns_value stmt_list_node::eval() {
+    std::list<node*>::iterator it = plist.begin();
+    for (;it != plist.end(); ++it) {
+        (*it)->eval();
+    }
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
+}

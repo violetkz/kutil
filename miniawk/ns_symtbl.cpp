@@ -1,4 +1,5 @@
-
+#include <map>
+#include <cstdio> //for printf. need remove in future.
 #include "ns_symtbl.h"
 
 class ns_symtbl {
@@ -22,7 +23,7 @@ class ns_symtbl {
 ns_symtbl::symtbl *ns_symtbl::tbl = NULL;
 
 /* install a symbol into table */
-symbol *install_symbol(char *name) {
+symbol *install_symbol(const char *name) {
     ns_symtbl::symtbl *tbl = ns_symtbl::get_tbl();
 
     std::string id(name);
@@ -46,7 +47,7 @@ symbol *install_symbol(char *name) {
 /* find a symbol from table by name and return pointer of symbol if existed
  * esle return NULL 
  */ 
-symbol *find_symbol(char *name) {
+symbol *find_symbol(const char *name) {
     symbol *re = NULL;
     
     ns_symtbl::symtbl *tbl = ns_symtbl::get_tbl();

@@ -3,10 +3,11 @@
 
 #include "ns_value.h"
 
+
 /* symbol info */
 struct symbol {
     std::string id;
-    ns_value    v;
+    ns_value    value;
 };
 
 symbol *install_symbol(const char *name);

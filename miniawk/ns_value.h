@@ -9,7 +9,13 @@ enum ns_value_type {
     NSVAL_BOOLEAN,          /* boolean */
     NSVAL_EXPERESS_AST,     /* expression  */
     NSVAL_UNINITIALIZED,    /* uninitialized */
-    NSVAL_ILLEGAL           /* illegal */
+    NSVAL_ILLEGAL,          /* illegal */
+    NSVAL_STATUS            /* stmt stauts */
+};
+
+enum ns_status_type {
+    NSVAL_STATUS_OK, 
+    NSVAL_STATUS_FAILED
 };
 
 struct node; //previous declaration
@@ -31,17 +37,19 @@ public:
 
     ns_value &operator = (const ns_value &s);
 
-    ns_value(int v) : type(NSVAL_INTEGER), int_val(v) ,ref_count(0){}
-    ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) ,ref_count(0){}
-    ns_value(const char *s);
-    ns_value(ns_value_type t) : type(t), int_val(0) ,ref_count(0){}
+    explicit ns_value(int v) : type(NSVAL_INTEGER), int_val(v) ,ref_count(0){}
+    explicit ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) ,ref_count(0){}
+    explicit ns_value(const char *s);
+    explicit ns_value(ns_value_type t) : type(t), int_val(0) ,ref_count(0){}
+    explicit ns_value(ns_value_type t, ns_status_type status) 
+            : type(t), int_val(status), ref_count(0){}
 
     inline int count() const {return *ref_count;}
 
 private:
     inline void add_ref() { 
-        (*ref_count)++;
         if (type == NSVAL_LITERAL_STR ) {
+            (*ref_count)++;
             std::cout <<"add_ref "<< *chr_val << "|" << *ref_count << std::endl;
         }
     }

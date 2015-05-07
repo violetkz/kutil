@@ -2,6 +2,12 @@
     a = 1;
     b = 222;
     d = 2222;
+    a = b = d;
+    b = 999*999;
+    str = "hello";
+    s2  = "world!";
+    
+    x = str + s2;
     print(a,b,d);
+    print(x);
 }
-

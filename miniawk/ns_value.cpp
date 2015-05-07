@@ -2,10 +2,10 @@
 
 void ns_value::release() { 
 
-    if (ref_count) {
+    if (type == NSVAL_LITERAL_STR &&  ref_count  ) {
         -- (*ref_count);
         std::cout << "release "<< *chr_val << "|" << *ref_count << std::endl;
-        if (type == NSVAL_LITERAL_STR && *ref_count <= 0) {
+        if (*ref_count <= 0) {
             delete chr_val;
             chr_val = NULL;
 

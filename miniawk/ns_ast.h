@@ -40,7 +40,7 @@ public:
     virtual void print() {}
     
     /* eval */
-    virtual ns_value *eval() {return NULL;}
+    virtual ns_value eval() { return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
     
 public:
     int type;
@@ -52,7 +52,7 @@ public:
         /* do nothing */
     }
     void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     symbol *sym;
 };
@@ -64,7 +64,7 @@ public:
         /* do nothing */
     }
     void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     int i;
 };
@@ -76,7 +76,7 @@ public:
         /* do nothing */
     }
     virtual void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     char *str;
 };
@@ -102,7 +102,7 @@ public:
         /* do nothing */
     }
     void print();    
-    ns_value *eval(); 
+    ns_value eval(); 
 
 public:
     node *pattern;
@@ -129,7 +129,7 @@ public:
     }
 
     void print();
-    ns_value *eval(); 
+    ns_value eval(); 
 public:
     std::list<rule_node *> slist; 
 };
@@ -144,7 +144,7 @@ public:
     }
 
     void print(); 
-    ns_value *eval(); 
+    ns_value eval(); 
 public:
     std::list<node *> elist; 
 };
@@ -157,7 +157,7 @@ public:
              rvalue(val) {
         /* do nothing */
     }
-    ns_value *eval();
+    ns_value eval();
 
 public:
     symbol *variable_name;
@@ -180,6 +180,7 @@ public:
             (*it)->print();
         }
     }
+    ns_value eval();
 public:
     std::list<node*>  plist; 
 };
@@ -190,7 +191,7 @@ public:
         :node(STMT_WHILE_NODE), condition_exp(condition), stmts(stmt_list) {
     }
     void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -209,7 +210,7 @@ public:
      }
 
     void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -222,7 +223,7 @@ public:
         : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
     }
     void print();
-    ns_value *eval();
+    ns_value eval();
 public:
     symbol  *tmp_id;
     symbol  *id; 
@@ -234,7 +235,8 @@ public:
     operator_node(char opt, node *l, node *r) 
         : node(OPERATOR_NODE), opt(opt), left(l), right(r) {
     }
-
+    
+    ns_value eval();
 public:
     char    opt; 
     node  *left;
@@ -247,6 +249,7 @@ public:
         : node(COMPARE_NODE), cmp_opt(opt), left(l), right(r) {
     }
 
+    ns_value eval();
 public:
     int    cmp_opt; 
     node  *left;
@@ -264,7 +267,7 @@ public:
     }
     
     void print(); 
-    ns_value *eval();
+    ns_value eval();
 
 public:
     const char *func_name;
