@@ -35,11 +35,9 @@ symbol *install_symbol(const char *name) {
         n = new symbol;
         n->id = id;
         (*tbl)[id] = n;
-        printf("-debug-: install symbol=> %s\n", name);
     }
     else {
         n = (*tbl)[id];
-        printf("-debug-: found symbol => %s\n", name);    
     }
     return n;
 }

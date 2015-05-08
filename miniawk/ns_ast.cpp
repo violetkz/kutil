@@ -45,7 +45,7 @@ void rule_node::print() {
 }
 
 ns_value rule_node::eval() {
-    puts("rule_node\n");
+
     pattern->eval();
     action->eval();
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
@@ -60,7 +60,6 @@ void rule_list_node::print() {
 }
 
 ns_value rule_list_node::eval() {
-    puts("rule_list_node\n"); 
     std::list<rule_node*>::iterator it = slist.begin();
     for (;it != slist.end(); ++it) {
         (*it)->eval();
@@ -77,7 +76,7 @@ void exp_list_node::print() {
 }
 
 ns_value exp_list_node::eval() {
-    puts("exp_list_node\n");
+
     std::list<node*>::iterator it = elist.begin();
     for (;it != elist.end(); ++it) {
         (*it)->eval();
@@ -93,92 +92,21 @@ void builtin_func_node::print() {
 }
 
 ns_value assign_node::eval() {
-
     variable_name->value = rvalue->eval();
-
     return variable_name->value;
-    
-#if 0
-    puts("assign_node\n");
-    assert(rvalue != NULL);
-    int type = rvalue->type;
-    str_node *t;
-    int_node *inod;
-    switch (type) {
-        case STR_NODE:
-            variable_name->type = STR_NODE;
-            t = static_cast<str_node*>(rvalue);
-
-            /* check if need free previous string buffer memory */
-            if (variable_name->chr_val != NULL) {
-                //free_strval(variable_name->chr_val);                
-            }
-
-            /* assign new value */
-            variable_name->chr_val = t->str;
-            break;
-
-        case NUM_INT_NODE:
-            variable_name->type = NUM_INT_NODE;
-            inod = static_cast<int_node*>(rvalue);
-            variable_name->int_val = inod->i;
-            break;
-
-        case REGEX_STR_NODE:
-            /* FIXME */
-            break;
-        default:
-            break;
-    };
-    return NULL;
-#endif
 }
 
 ns_value builtin_func_node::eval() {
 
-if (strcmp(func_name, "print") == 0) {
-    
-    std::list<node*>& pl = plist->elist;
-    std::list<node*>::iterator it = pl.begin();
-
-    for(; it != pl.end(); ++it) {
-        std::cout << (*it)->eval();
-    }
-}
-#if 0
-    puts("builtin_func_node\n");
-    /* FIXME: just for tesint */
     if (strcmp(func_name, "print") == 0) {
+
         std::list<node*>& pl = plist->elist;
         std::list<node*>::iterator it = pl.begin();
-        std::string fmt;
+
         for(; it != pl.end(); ++it) {
-            if ((*it)->type == STR_NODE) {
-                str_node *sn = static_cast<str_node*>(*it);
-                printf(" %s ", sn->str);
-            }
-            else if ((*it)->type == NUM_INT_NODE) {
-                int_node *in = static_cast<int_node*>(*it);
-                printf(" %d ", in->i);
-            }
-            else if ((*it)->type == IDENTIFIER_NODE) {
-                identifer_node *idn = static_cast<identifer_node*>(*it);
-                symbol *s = idn->sym;
-                switch (s->type) {
-                    case STR_NODE: 
-                        puts(s->chr_val);
-                        break;
-                    case NUM_INT_NODE:
-                        printf("%d", s->int_val);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            std::cout << (*it)->eval();
         }
     }
-    return NULL;
-#endif
 }
 
 /* if statment */
@@ -188,6 +116,7 @@ void stmt_if_node::print() {
 
 ns_value stmt_if_node::eval() {
     // FIXME
+
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
@@ -197,6 +126,7 @@ void stmt_while_node::print() {
 
 ns_value stmt_while_node::eval() {
     // FIXME
+
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
@@ -206,11 +136,13 @@ void stmt_for_in_node::print() {
 
 ns_value stmt_for_in_node::eval() {
     // FIXME
+
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 
 ns_value operator_node::eval() {
+
     ns_value l = left->eval();
     ns_value r = right->eval();
     ns_value n;
@@ -232,7 +164,7 @@ ns_value operator_node::eval() {
 }
 
 ns_value compare_node::eval() {
-    
+
     ns_value l = left->eval();
     ns_value r = right->eval();
 
@@ -242,6 +174,7 @@ ns_value compare_node::eval() {
 }
 
 ns_value stmt_list_node::eval() {
+
     std::list<node*>::iterator it = plist.begin();
     for (;it != plist.end(); ++it) {
         (*it)->eval();

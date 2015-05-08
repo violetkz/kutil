@@ -12,6 +12,7 @@ char *makebuffer(size_t n);
 %}
 %%
 [ \t\n]    ;   /* Skip  whitespaces */
+#.*\n      ;   /* skip comments */
 
 "if"    { return IF;  } 
 "else"  { return ELSE;}
@@ -31,7 +32,7 @@ char *makebuffer(size_t n);
 "substr" |
 "split"  |
 "print"  |
-"getline"  {puts("lex-print\n");yylval.fn = strdup(yytext); return BUILTIN_FUNC;}
+"getline"  {yylval.fn = strdup(yytext); return BUILTIN_FUNC;}
 
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
 [A-Za-z_][A-Za-z0-9_]*  { 
@@ -39,42 +40,26 @@ char *makebuffer(size_t n);
                 /* yylval.strval = yytext;  */
                 return IDENTIFIER; 
                }
-\"[^"]*\"      { yylval.strval = strdup(yytext); return STR; }
-"/"            { 
-                int c;
-                int i = 0;
-                int escapeflg = 0;
-                
-                char* buff = makebuffer(1024);
-                while (i < 1024) { 
-                    c = yyinput();
-                    if (c == EOF || c == '\0') {
-                        puts("[error]: bad regex str.\n");
-                        yyterminate();
-                    }
-                    if (escapeflg == 0) {  /* the presourse char is not escape char */
-                        if (c == '/')  break;
-                        if (c != '\\') buff[i++] = c;
-                        else {
-                            escapeflg = 1; /* set escapeflg as True */
-                        }
-
-                    }
-                    else { 
-                        if (c == '/') {
-                            buff[i++] = c;
-                        }
-                        else {
-                            buff[i++] = '\\';
-                            buff[i++] = 'c';
-                        }
-                        escapeflg = 0;
-                    }
+r{0,1}\"[^"]*\" { 
+                char *buff = makebuffer(yyleng + 1);
+                char str_type = yytext[0];
+                int skip_num = 0;
+                if (str_type == 'r') { /* regrex str */
+                    skip_num = 2;      /* skip `r"`  */ 
                 }
-                buff[i] = '\0';
-                yylval.strval = buff;;
-                return REGEXSTR;
-            }
+                else {
+                    skip_num = 1;      /* skip `"`  */
+                }
+                char *s = yytext + skip_num;
+                char *d = buff;
+
+                for (int i = 0; i < yyleng - 2; ++i) {
+                    *d++ = *s++;
+                }
+                *d = '\0'; /* make sure a end-char */
+                yylval.strval = buff;
+                return STR;
+                }
 "[" |
 "]" |
 "=" |
@@ -86,8 +71,8 @@ char *makebuffer(size_t n);
 "+" |
 "-" |
 "*" |
+"/" |
 "("         {return yytext[0]; }
-
 
 .           { yyerror("unkown token."); }
 %%

@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "ns_ast.h"
+
 int yylex(void); 
 void yyerror(const char *s);
 
@@ -55,7 +56,7 @@ void yyerror(const char *s);
 %start start
 %%
 start: rule_list { if ($1 != NULL) {
-                    $1->print();
+                    /* $1->print(); */
                     $1->eval();
                     }
                  }
@@ -81,7 +82,7 @@ pattern: /* empty */ {$$ = NULL;}
 
 
 stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'  
-                {  $$ = new stmt_for_in_node($2, $4, $6); }
+                { $$ = new stmt_for_in_node($2, $4, $6); }
         | WHILE '(' exp ')' '{' stmt_list '}'
                 { $$ = new stmt_while_node($3, $6); }
         | IF '(' exp ')' '{' stmt_list '}'
@@ -89,7 +90,7 @@ stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6, $10); }
         | exp ';'
-                { puts("stmt exp\n"); $$ = $1; }
+                { $$ = $1; }
         /*
         | BREAK ';'
         | CONTINUE ';'
@@ -125,23 +126,20 @@ exp:
     | exp CMP_LE exp    { $$ = new compare_node(CMP_LE, $1, $3); }
     | exp CMP_GE exp    { $$ = new compare_node(CMP_GE, $1, $3); }
     
-    | IDENTIFIER        { puts("expression\n"); $$ = new identifer_node($1);         }
-    | STR               { puts("exp str\n");$$ = new str_node($1);               }
-    | REGEXSTR          { puts("exp re\n"); $$ = new regex_str_node($1);         }
-    | NUM_INT           { puts("exp int\n"); $$ = new int_node($1);               }
+    | IDENTIFIER        { $$ = new identifer_node($1);         }
+    | STR               { $$ = new str_node($1);               }
+    | REGEXSTR          { $$ = new regex_str_node($1);         }
+    | NUM_INT           { $$ = new int_node($1);               }
     ;
 
 exp_list: /* empty */ {$$ = NULL;}
     | exp             
                     { 
-                    puts("explit");
                     $$ = new exp_list_node;
-
                     $$->append($1);
                     }
     | exp_list ',' exp 
                     { 
-                    puts("explit");
                     $$  = $1;
                     if ($$ == NULL) {
                         $$ = new exp_list_node;
@@ -152,11 +150,10 @@ exp_list: /* empty */ {$$ = NULL;}
     ;
 
 func_exp: BUILTIN_FUNC '(' exp_list ')' 
-        { puts("builtin_func\n"); $$ = new builtin_func_node($1, $3); }
+        { $$ = new builtin_func_node($1, $3); }
     ;
 
 assign_exp: IDENTIFIER '=' exp  {
-          puts("assign_exp\n");
           $$ = new assign_node($1, $3);
         }  
     ;
@@ -168,9 +165,3 @@ void yyerror(const char *s){
     printf("[Error], Line: %d, Msg: [%s] \n", yylineno, yytext);
 }
 
-int main(void) {
-  extern FILE* yyin;
-  yyin = fopen("test.miniawk", "r");
-  yyparse();
-  return 0;
-}

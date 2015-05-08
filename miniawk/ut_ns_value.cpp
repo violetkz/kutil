@@ -65,6 +65,12 @@ void opt_test() {
     std::cout << ns + ns1;
 }
 
+void opt_test2() {
+    ns_value n= "hello";
+    ns_value n1 = "world";
+    
+    std::cout << n + n1 ;
+}
 int main() {
 //    constructor_test();
     assign_test();

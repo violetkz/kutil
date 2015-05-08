@@ -9,8 +9,10 @@ all: ns
 #	#mv ns.tab.c ns.tab.cpp
 #	g++ -g -o ns ns.tab.c ns_lex.cpp ns_ast.cpp
 
-ns: ns_symtbl.o ns.tab.o ns_lex.o ns_value.o ns_ast.o 
+ns: ns_symtbl.o ns.tab.o ns_lex.o ns_value.o ns_ast.o miniawk.o
 	g++ ${CPPFLAGS} -o ns $^
+
+miniawk.o:miniawk.cpp ns.tab.o
 
 ns_ast.o:ns_ast.cpp ns_ast.h
 
