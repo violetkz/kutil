@@ -9,5 +9,6 @@
     
     x = str + s2;
     print(a,b,d);
+    print(str+s2);
     print(x);
 }
