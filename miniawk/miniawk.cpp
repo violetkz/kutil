@@ -49,7 +49,7 @@ int main(int args, char *argv[]) {
   yyin = fopen(opts.filename, "r");
   if (yyin) {
       yyparse();
+	  fclose(yyin);
   }
-  fclose(yyin);
   return 0;
 }

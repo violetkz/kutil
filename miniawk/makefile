@@ -30,9 +30,14 @@ ns_symtbl.o:ns_symtbl.h ns_symtbl.cpp
 ut_value: ut_ns_value.o ns_value.o
 	g++ -g -o ut_value $^ 
 
+ut_nodelist:ns_value.o ns_ast.o ut_nodelist.o
+	g++ -g -o ut_nodelist $^ 
+
 ns_value.o: ns_value.h ns_value.cpp
 
 ut_ns_value.o: ut_ns_value.cpp
+
+ut_nodelist.o: ut_nodelist.cpp
 
 clean:
 	rm -rf *.o *.exe  *.out *.dSYM ns lextest ns.tab.c ns.tab.cpp ns.tab.h ns_lex.c ns_lex.cpp *.stackdump ut_value

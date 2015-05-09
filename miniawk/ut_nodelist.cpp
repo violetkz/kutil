@@ -3,9 +3,9 @@
 
 typedef node_list<node, node::EXP_NODE>  stmt_list;
 
-class mynode : public node_list<node, node::EXP_NODE> {
+class mynode : public explist_base {
 public:
-    mynode():node_list() {}
+    mynode(): explist_base() {}
 
     ns_value eval() {
         nl_iter it = begin();
@@ -36,4 +36,5 @@ void test() {
 
 int main() {
     test();
+	return 0;
 }

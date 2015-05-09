@@ -36,7 +36,7 @@ ns_value rule_list_node::eval() {
 
 ns_value exp_list_node::eval() {
 
-    node_list::nl_iter it = begin();
+    nl_iter it = begin();
     for (;it != end(); ++it) {
         (*it)->eval();
     }

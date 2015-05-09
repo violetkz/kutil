@@ -116,20 +116,24 @@ private:
     std::list<T*> nlist;
 };
 
-class rule_list_node : public node_list<rule_node, node::RULE_LIST_NODE> {
+typedef node_list<rule_node, node::RULE_LIST_NODE> rule_list_base;
+class rule_list_node : public rule_list_base {
 public:
-    rule_list_node() : node_list() {}
-    ns_value eval();
-};
-class exp_list_node : public node_list<node, node::EXPLIST_NODE> {
-public:
-    exp_list_node() : node_list() {}
+    rule_list_node() : rule_list_base() {}
     ns_value eval();
 };
 
-class stmt_list_node : public node_list<node, node::STMT_LIST_NODE> {
+typedef node_list<node, node::EXPLIST_NODE> explist_base;
+class exp_list_node : public  explist_base {
 public:
-    stmt_list_node() : node_list() {}
+    exp_list_node() : explist_base() {}
+    ns_value eval();
+};
+
+typedef node_list<node, node::STMT_LIST_NODE> stmt_list_base;
+class stmt_list_node : public stmt_list_base {
+public:
+    stmt_list_node() : stmt_list_base() {}
     ns_value eval();
 };
 
