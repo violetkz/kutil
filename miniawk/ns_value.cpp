@@ -31,7 +31,8 @@ ns_value::~ns_value() {
     destruct();
 }
 
-ns_value::ns_value(const char *s) : type(NSVAL_LITERAL_STR), chr_val(NULL), ref_count(0) {
+ns_value::ns_value(const char *s) 
+    : type(NSVAL_LITERAL_STR), chr_val(NULL), ref_count(0) {
     if (s == NULL || strlen(s) == 0) {
         chr_val = new std::string(); 
     }
@@ -41,7 +42,8 @@ ns_value::ns_value(const char *s) : type(NSVAL_LITERAL_STR), chr_val(NULL), ref_
     ref_count = new int(1);
 }
 
-ns_value::ns_value(const ns_value &s) : type(s.type), ref_count(s.ref_count), int_val(0) {
+ns_value::ns_value(const ns_value &s)
+    : type(s.type), ref_count(s.ref_count), int_val(0) {
 
     if (type == NSVAL_LITERAL_STR) {
         chr_val  = s.chr_val;
@@ -71,6 +73,27 @@ ns_value &ns_value::operator = (const ns_value &s) {
     return *this;
 }
 
+ns_value::operator bool() {
+    bool v = false;
+    switch (type) {
+        case NSVAL_BOOLEAN:
+            v = bool_val;
+            break;
+        case NSVAL_INTEGER:
+            /* NOTE: if value is not equal with 0, return true */ 
+            v = (int_val != 0) ? true : false;
+            break;
+        case NSVAL_LITERAL_STR:
+            /* NOTE: if the string is not empty, return true */
+            v = (chr_val->size() > 0) ? true : false;
+            break;
+        default:
+            std::cerr << "warning. can't convert to boolean from type:%s\n" << *this << std::endl;
+            break; 
+    }
+    return v;
+}
+
 std::ostream &operator << (std::ostream &out, const ns_value &v) {
     switch (v.type) {
         case NSVAL_UNINITIALIZED:
@@ -98,7 +121,6 @@ std::ostream &operator << (std::ostream &out, const ns_value &v) {
 }
 
 ns_value operator+ (const ns_value &l, const ns_value &r) {
-
     if (l.type == r.type) {
         if (l.type == NSVAL_INTEGER) {
             return ns_value(l.int_val + r.int_val);
@@ -131,4 +153,68 @@ ns_value operator/ (const ns_value &l, const ns_value &r) {
         return ns_value(l.int_val / r.int_val);
     }
     else return ns_value(NSVAL_ILLEGAL);  
+}
+
+bool operator == (const ns_value &l, const ns_value &r) {
+    bool v = false;
+    if (l.type != r.type) {
+        std::cerr << "warning! can't compare the values with different type." << std::endl;
+        return v;
+    }
+    switch (l.type) {
+        case NSVAL_STATUS: /* the same with integer */
+        case NSVAL_INTEGER:
+            v = (l.int_val == r.int_val) ? true : false;
+            break;
+        case NSVAL_LITERAL_STR:
+            v = (*l.chr_val == *r.chr_val) ? true : false;
+            break;
+        case NSVAL_BOOLEAN:
+            v = (l.bool_val == r.bool_val) ? true : false;
+            break;
+        default:
+            std::cerr << "warning. can't convert to boolean from type:%s\n" << l << std::endl;
+            break; 
+    }
+    return v;
+}
+
+bool operator != (const ns_value &l, const ns_value &r) {
+    return ! operator== (l, r);
+}
+
+bool operator > (const ns_value &l, const ns_value &r) {
+    bool v = false;
+    if (l.type != r.type) {
+        std::cerr << "warning! can't compare the values with different type." << std::endl;
+        return v;
+    }
+    switch (l.type) {
+        case NSVAL_STATUS: /* the same with integer */
+        case NSVAL_INTEGER:
+            v = (l.int_val > r.int_val) ? true : false;
+            break;
+        case NSVAL_LITERAL_STR:
+            v = (*l.chr_val > *r.chr_val) ? true : false;
+            break;
+        case NSVAL_BOOLEAN:
+            v = (l.bool_val > r.bool_val) ? true : false;
+            break;
+        default:
+            std::cerr << "warning. can't convert to boolean from type:%s\n" << l << std::endl;
+            break; 
+    }
+    return v;
+}
+
+bool operator <  (const ns_value &l, const ns_value &r) {
+    return !(operator> (l, r));
+}
+
+bool operator <= (const ns_value &l, const ns_value &r) {
+    return operator== (l, r) || operator< (l, r);
+}
+
+bool operator >= (const ns_value &l, const ns_value &r) {
+    return operator== (l, r) || operator> (l, r);
 }

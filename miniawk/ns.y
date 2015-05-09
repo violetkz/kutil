@@ -27,7 +27,7 @@ void yyerror(const char *s);
     stmt_for_in_node    *ast_stmt_if_in;
 };
 
-%token  IF ELSE AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE WHILE 
+%token  IF ELSE AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE WHILE CMP_NE
 
 %token <strval> STR REGEXSTR
 %token <fn>     BUILTIN_FUNC
@@ -51,7 +51,7 @@ void yyerror(const char *s);
 %left '+' '-'
 %left '*' '/' 
 /*%right UNARY */
-%nonassoc CMP_GE CMP_LE CMP_LS CMP_EQ CMP_GT
+%nonassoc CMP_GE CMP_LE CMP_LS CMP_EQ CMP_GT CMP_NE
 
 %start start
 %%
@@ -123,6 +123,7 @@ exp:
     | exp CMP_GT exp    { $$ = new compare_node(CMP_GT, $1, $3); }
     | exp CMP_LS exp    { $$ = new compare_node(CMP_LS, $1, $3); }
     | exp CMP_EQ exp    { $$ = new compare_node(CMP_EQ, $1, $3); }
+    | exp CMP_NE exp    { $$ = new compare_node(CMP_NE, $1, $3); }
     | exp CMP_LE exp    { $$ = new compare_node(CMP_LE, $1, $3); }
     | exp CMP_GE exp    { $$ = new compare_node(CMP_GE, $1, $3); }
     

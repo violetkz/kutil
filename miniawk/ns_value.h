@@ -43,6 +43,9 @@ public:
             : type(t), int_val(status), ref_count(0){}
     inline int count() const {return (ref_count) ? *ref_count : 0;}
     ns_value &operator = (const ns_value &s);
+
+    operator bool();
+    //ns_value operator! (); 
 private:
     inline void add_ref(); 
     inline void release();
@@ -56,5 +59,12 @@ ns_value operator+ (const ns_value &l, const ns_value &r);
 ns_value operator- (const ns_value &l, const ns_value &r);
 ns_value operator* (const ns_value &l, const ns_value &r);
 ns_value operator/ (const ns_value &l, const ns_value &r);
+
+bool operator == (const ns_value &l, const ns_value &r);
+bool operator != (const ns_value &l, const ns_value &r);
+bool operator >  (const ns_value &l, const ns_value &r);
+bool operator <  (const ns_value &l, const ns_value &r);
+bool operator <= (const ns_value &l, const ns_value &r);
+bool operator >= (const ns_value &l, const ns_value &r);
 
 #endif  //~ns_value_h___

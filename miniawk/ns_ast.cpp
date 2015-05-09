@@ -5,6 +5,7 @@
 #include <string>
 #include "ns_ast.h"
 #include "ns_symtbl.h"
+#include "ns.tab.h"
 
 extern void free_strval(char*);
 
@@ -17,7 +18,7 @@ ns_value int_node::eval() {
 }
 
 ns_value str_node::eval() {
-   return ns_value(str); 
+    return ns_value(str); 
 }
 
 ns_value rule_node::eval() {
@@ -63,23 +64,27 @@ ns_value builtin_func_node::eval() {
 }
 
 ns_value stmt_if_node::eval() {
-    // FIXME
-
+    ns_value cond = condition_exp->eval();
+    if (cond) {
+        stmts->eval();
+    }
+    else if (else_stmts != NULL) {
+        else_stmts->eval();
+    }
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 ns_value stmt_while_node::eval() {
-    // FIXME
-
+    while (condition_exp->eval()) {
+        stmts->eval();
+    }
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 ns_value stmt_for_in_node::eval() {
-    // FIXME
-
+    // TODO  
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
-
 
 ns_value operator_node::eval() {
 
@@ -108,9 +113,30 @@ ns_value compare_node::eval() {
     ns_value l = left->eval();
     ns_value r = right->eval();
 
-    //FIXME
-    //
-    return ns_value(false);
+    bool v = false;
+    switch (cmp_opt) {
+        case CMP_GT:
+            v = l > r;
+            break;
+        case CMP_LS:
+            v = l < r;
+            break;
+        case CMP_EQ:
+            v = l == r;
+            break;
+        case CMP_NE:
+            v = l != r;
+            break;
+        case CMP_GE:
+            v = l >= r;
+            break;
+        case CMP_LE:
+            v = l <= r;
+            break;
+        default:
+            v = false; 
+    }
+    return ns_value(v);
 }
 
 ns_value stmt_list_node::eval() {

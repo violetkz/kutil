@@ -24,6 +24,7 @@ char *makebuffer(size_t n);
 ">"     { return CMP_GT; }
 "<"     { return CMP_LS; }
 "=="    { return CMP_EQ; }
+"!="    { return CMP_NE; }
 ">="    { return CMP_GE; }
 "<="    { return CMP_LE; }
 
