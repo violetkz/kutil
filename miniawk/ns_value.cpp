@@ -74,27 +74,26 @@ ns_value &ns_value::operator = (const ns_value &s) {
 std::ostream &operator << (std::ostream &out, const ns_value &v) {
     switch (v.type) {
         case NSVAL_UNINITIALIZED:
-            out << " NSVAL_UNINITIALIZED " ;
+            out << "uninitialized value" ;
             break;
         case NSVAL_ILLEGAL:
-            out << " NSVAL_INTEGER ";
+            out << "illegal value";
             break;
+        case NSVAL_STATUS:
+            out << "status:" << v.int_val;
         case NSVAL_INTEGER:
-            out << " NSVAL_INTEGER: " << v.int_val ;
+            out << v.int_val;
             break;
         case NSVAL_LITERAL_STR:
-            out << " NSVAL_LITERAL_STR: " << *v.chr_val;
+            out << *v.chr_val;
             break;
         case NSVAL_BOOLEAN:
-            out << " NSVAL_BOOLEAN: " << v.bool_val;
+            out << v.bool_val;
             break;
-
         default:
+            out << "unkown type" << v.type;
             break;
-
     }
-
-    out << std::endl;
     return out;
 }
 

@@ -36,14 +36,8 @@ public:
     node(int t) : type(t) {}
     virtual ~node() {}
 
-    /* print self node */ 
-    virtual void print() {}
-    
     /* eval */
-    virtual ns_value eval() { //return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
-    ns_value n(0);
-    return n;
-    }
+    virtual ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
     
 public:
     int type;
@@ -54,7 +48,6 @@ public:
     identifer_node(symbol *s) : node(IDENTIFIER_NODE), sym(s) {
         /* do nothing */
     }
-    void print();
     ns_value eval();
 public:
     symbol *sym;
@@ -66,7 +59,6 @@ public:
     int_node(int n) : node(NUM_INT_NODE), i(n) {
         /* do nothing */
     }
-    void print();
     ns_value eval();
 public:
     int i;
@@ -78,7 +70,6 @@ public:
     str_node(char *s) : node(STR_NODE), str(s) {
         /* do nothing */
     }
-    virtual void print();
     ns_value eval();
 public:
     char *str;
@@ -90,7 +81,6 @@ public:
         :node(REGEX_STR_NODE), regex_str(str) {
         /* do nothing */  
     }
-    void print();
 
 public:
     char *regex_str;
@@ -104,7 +94,6 @@ public:
             action(act) {
         /* do nothing */
     }
-    void print();    
     ns_value eval(); 
 
 public:
@@ -112,44 +101,36 @@ public:
     node *action;
 };
 
-#if 0
-template <class T> base_list_node : public node {
+template<typename T, int NS_NODE_TYPE> 
+class node_list : public node 
+{
 public:
-    base_list_node(int type) : node(t);
-    void append(T *n){};
-public:
-    std::list<T *> list_;
-};
-#endif
+    typedef typename std::list<T*>::iterator nl_iter;
+    node_list(): node(NS_NODE_TYPE) {}
 
-class rule_list_node : public node {
-public:
-    rule_list_node() : node(RULE_LIST_NODE), slist() {
-    }
+    inline void append(T* n) { nlist.push_back(n); }
+    inline nl_iter begin() { return nlist.begin(); }
+    inline nl_iter end() { return nlist.end(); }
     
-    inline void append(rule_node *n) {
-        slist.push_back(n);
-    }
-
-    void print();
-    ns_value eval(); 
-public:
-    std::list<rule_node *> slist; 
+private:
+    std::list<T*> nlist;
 };
 
-class exp_list_node : public node {
+class rule_list_node : public node_list<rule_node, node::RULE_LIST_NODE> {
 public:
-    exp_list_node() : node(EXPLIST_NODE), elist() {
-    }
-    
-    inline void append(node *n) {
-        elist.push_back(n);
-    }
+    rule_list_node() : node_list() {}
+    ns_value eval();
+};
+class exp_list_node : public node_list<node, node::EXPLIST_NODE> {
+public:
+    exp_list_node() : node_list() {}
+    ns_value eval();
+};
 
-    void print(); 
-    ns_value eval(); 
+class stmt_list_node : public node_list<node, node::STMT_LIST_NODE> {
 public:
-    std::list<node *> elist; 
+    stmt_list_node() : node_list() {}
+    ns_value eval();
 };
 
 class assign_node : public node {
@@ -167,33 +148,11 @@ public:
     node *rvalue;
 };
 
-
-class stmt_list_node : public node {
-public:
-    stmt_list_node() : node(STMT_LIST_NODE), plist() {
-        /* do nothing */
-    }
-    void append(node *n) {
-        plist.push_back(n);
-    }
-
-    void print() {
-        std::list<node*>::iterator it = plist.begin();
-        for (;it != plist.end(); ++it) {
-            (*it)->print();
-        }
-    }
-    ns_value eval();
-public:
-    std::list<node*>  plist; 
-};
-
 class stmt_while_node : public node {
 public:
     stmt_while_node(node *condition, stmt_list_node *stmt_list) 
         :node(STMT_WHILE_NODE), condition_exp(condition), stmts(stmt_list) {
     }
-    void print();
     ns_value eval();
 public:
     node *condition_exp;
@@ -212,7 +171,6 @@ public:
         : node(STMT_IF_NODE), condition_exp(condition), stmts(action), else_stmts(else_action) {
      }
 
-    void print();
     ns_value eval();
 public:
     node *condition_exp;
@@ -225,7 +183,6 @@ public:
     stmt_for_in_node(symbol *tmp, symbol *ln, stmt_list_node *stmt_list)
         : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
     }
-    void print();
     ns_value eval();
 public:
     symbol  *tmp_id;
@@ -269,14 +226,11 @@ public:
         /* do nothing */
     }
     
-    void print(); 
     ns_value eval();
 
 public:
     const char *func_name;
     exp_list_node *plist;
 };
-
-
 
 #endif //~NS_DEF_H____

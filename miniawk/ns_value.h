@@ -31,7 +31,7 @@ public:
     };
 
 public: 
-    ns_value() : type(NSVAL_UNINITIALIZED), int_val(0), ref_count(0) {}
+    ns_value():type(NSVAL_UNINITIALIZED), int_val(0), ref_count(0) {}
     ns_value(const ns_value& n);
     ~ns_value();
 
