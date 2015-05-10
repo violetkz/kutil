@@ -59,6 +59,7 @@ ns_value operator+ (const ns_value &l, const ns_value &r);
 ns_value operator- (const ns_value &l, const ns_value &r);
 ns_value operator* (const ns_value &l, const ns_value &r);
 ns_value operator/ (const ns_value &l, const ns_value &r);
+ns_value operator% (const ns_value &l, const ns_value &r);
 
 bool operator == (const ns_value &l, const ns_value &r);
 bool operator != (const ns_value &l, const ns_value &r);

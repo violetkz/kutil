@@ -17,8 +17,6 @@ void yyerror(const char *s);
     builtin_func_node   *ast_func;
     assign_node         *ast_assign;
     exp_list_node       *ast_explist;
-    /*exp_node            *ast_exp; */
-    /*paramter_list_node  *ast_param_list; */
     rule_list_node      *ast_rules;
     rule_node           *ast_rule;
     stmt_list_node      *ast_stmt_list;
@@ -28,38 +26,38 @@ void yyerror(const char *s);
 };
 
 %token  IF ELSE AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE WHILE CMP_NE
+%token  MAIN
 
 %token <strval> STR REGEXSTR
 %token <fn>     BUILTIN_FUNC
 %token <sym>    IDENTIFIER
 %token <intval> NUM_INT
+
 %type <ast>         pattern stmt exp
-/*%type <ast_exp>     exp */
 %type <ast_func>    func_exp 
 %type <ast_assign>  assign_exp 
 %type <ast_explist> exp_list
-/*%type <ast_param_list> param_list */
 %type <ast_rules>   rule_list
 %type <ast_rule>    rule
 %type <ast_stmt_list>  stmt_list;
 
 /* Lowest to highest */
-%left OR 
-%left AND 
 %right '='
-/*%left CONCAT_OP */
-%left '+' '-'
-%left '*' '/' 
-/*%right UNARY */
+%left OR AND
 %nonassoc CMP_GE CMP_LE CMP_LS CMP_EQ CMP_GT CMP_NE
+%left '+' '-'
+%left '*' '/' '%'
 
 %start start
 %%
 start: rule_list { if ($1 != NULL) {
-                    /* $1->print(); */
                     $1->eval();
                     }
                  }
+    | MAIN '{' stmt_list '}'
+                { 
+                if ($3 != NULL) $3->eval();
+                }
     ;
  
 rule_list: /* empty */ { $$ = NULL; } 
@@ -118,6 +116,7 @@ exp:
     | exp '-' exp       { $$ = new operator_node('-', $1, $3); }
     | exp '*' exp       { $$ = new operator_node('*', $1, $3); }
     | exp '/' exp       { $$ = new operator_node('/', $1, $3); }
+    | exp '%' exp       { $$ = new operator_node('%', $1, $3); }
 
     /* comparation expression */
     | exp CMP_GT exp    { $$ = new compare_node(CMP_GT, $1, $3); }
@@ -126,6 +125,8 @@ exp:
     | exp CMP_NE exp    { $$ = new compare_node(CMP_NE, $1, $3); }
     | exp CMP_LE exp    { $$ = new compare_node(CMP_LE, $1, $3); }
     | exp CMP_GE exp    { $$ = new compare_node(CMP_GE, $1, $3); }
+    | exp AND    exp    { $$ = new compare_node(AND, $1, $3);    }
+    | exp OR     exp    { $$ = new compare_node(OR, $1, $3);     }
     
     | IDENTIFIER        { $$ = new identifer_node($1);         }
     | STR               { $$ = new str_node($1);               }
@@ -163,6 +164,6 @@ assign_exp: IDENTIFIER '=' exp  {
 void yyerror(const char *s){
     extern int yylineno;
     extern char * yytext;
-    printf("[Error], Line: %d, Msg: [%s] \n", yylineno, yytext);
+    printf("* Error *, Line: %d, Msg: [%s] \n", yylineno, yytext);
 }
 

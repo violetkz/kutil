@@ -100,6 +100,8 @@ ns_value operator_node::eval() {
                    break;
         case '/':  n = l / r;
                    break;
+        case '%':  n = l % r;
+                   break;
         default:
                    n = ns_value(NSVAL_ILLEGAL);
                    fprintf(stderr, "* error *: un-defined operator: %c\n", opt);
@@ -133,8 +135,15 @@ ns_value compare_node::eval() {
         case CMP_LE:
             v = l <= r;
             break;
+        case OR:
+            v = l || r;
+            break;
+        case AND:
+            v = l && r;
+            break;
         default:
             v = false; 
+            break;
     }
     return ns_value(v);
 }

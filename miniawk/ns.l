@@ -16,11 +16,13 @@ char *makebuffer(size_t n);
 
 "if"    { return IF;  } 
 "else"  { return ELSE;}
-"for"   { return FOR; }
 "in"    { return IN;  }
+"for"   { return FOR; }
+"while" { return WHILE;}
+"main"  { return MAIN;}
+
 "and"   { return AND; }
 "or"    { return OR;  }
-
 ">"     { return CMP_GT; }
 "<"     { return CMP_LS; }
 "=="    { return CMP_EQ; }
@@ -73,6 +75,7 @@ r{0,1}\"[^"]*\" {
 "-" |
 "*" |
 "/" |
+"%" |
 "("         {return yytext[0]; }
 
 .           { yyerror("unkown token."); }

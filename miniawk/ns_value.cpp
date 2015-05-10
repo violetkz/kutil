@@ -155,6 +155,13 @@ ns_value operator/ (const ns_value &l, const ns_value &r) {
     else return ns_value(NSVAL_ILLEGAL);  
 }
 
+ns_value operator% (const ns_value &l, const ns_value &r) {
+    if (l.type == r.type && l.type == NSVAL_INTEGER && r.int_val != 0) {
+        return ns_value(l.int_val % r.int_val);
+    }
+    else return ns_value(NSVAL_ILLEGAL);  
+}
+
 bool operator == (const ns_value &l, const ns_value &r) {
     bool v = false;
     if (l.type != r.type) {
@@ -218,3 +225,4 @@ bool operator <= (const ns_value &l, const ns_value &r) {
 bool operator >= (const ns_value &l, const ns_value &r) {
     return operator== (l, r) || operator> (l, r);
 }
+
