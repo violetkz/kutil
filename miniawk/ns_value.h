@@ -2,6 +2,7 @@
 #define ns_value_h___
 
 #include <iostream>
+#include <list>
 
 enum ns_value_type {
     NSVAL_INTEGER       = 0, /* integer */
@@ -10,7 +11,8 @@ enum ns_value_type {
     NSVAL_EXPERESS_AST  = 3, /* expression  */
     NSVAL_UNINITIALIZED = 4, /* uninitialized */
     NSVAL_ILLEGAL       = 5, /* illegal */
-    NSVAL_STATUS        = 6  /* stmt stauts */
+    NSVAL_STATUS        = 6, /* stmt stauts */
+    NSVAL_LIST          = 7, /* list */
 };
 
 enum ns_status_type {
@@ -27,6 +29,7 @@ public:
         int                 int_val;    /* value for integer or status */
         bool                bool_val;   /* value for boolean */
         std::string         *chr_val;   /* value for string  */
+        std::list<node *>   *list_val;  /* value for list    */
         node                *node_val;  /* placeholder. not implemention. */
     };
 
@@ -38,7 +41,7 @@ public:
     explicit ns_value(int v) : type(NSVAL_INTEGER), int_val(v) ,ref_count(0) {}
     explicit ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) ,ref_count(0){}
     explicit ns_value(const char *s);
-    explicit ns_value(ns_value_type t) : type(t), int_val(0) ,ref_count(0){}
+    explicit ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0){}
     explicit ns_value(ns_value_type t, ns_status_type status) 
             : type(t), int_val(status), ref_count(0){}
     inline int count() const {return (ref_count) ? *ref_count : 0;}

@@ -1,23 +1,22 @@
 #include <map>
-#include <cstdio> //for printf. need remove in future.
 #include "ns_symtbl.h"
 
 class ns_symtbl {
-    public:
-        /* symbol table */
-        typedef std::map<std::string, symbol*> symtbl;
-        typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
+public:
+    /* symbol table */
+    typedef std::map<std::string, symbol*> symtbl;
+    typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
 
-    public:
-        static ns_symtbl::symtbl *get_tbl() {
-            if (tbl == NULL) {
-                tbl = new ns_symtbl::symtbl;
-            }
-            return tbl;
+public:
+    static ns_symtbl::symtbl *get_tbl() {
+        if (tbl == NULL) {
+            tbl = new ns_symtbl::symtbl;
         }
+        return tbl;
+    }
 
-    private:
-        static symtbl *tbl;
+private:
+    static symtbl *tbl;
 };
 
 ns_symtbl::symtbl *ns_symtbl::tbl = NULL;
