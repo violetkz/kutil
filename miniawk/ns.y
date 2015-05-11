@@ -134,17 +134,14 @@ exp:
     | STR               { $$ = new str_node($1);               }
     | REGEXSTR          { $$ = new regex_str_node($1);         }
     | NUM_INT           { $$ = new int_node($1);               }
-    | array_ref         { }
-    | array_def         { }
+    | array_ref         
+    | array_def         
     ;
 
-array_ref: IDENTIFIER '[' exp ']' {
-                               
-                    }
+array_ref: IDENTIFIER '[' exp ']' { $$ = new array_ref_node($1);}
         ;
 
-array_def: '[' exp_list ']' {
-         }
+array_def: '[' exp_list ']' { $$ = new array_def($1); }
          ;
 
 exp_list: /* empty */ {$$ = NULL;}
@@ -168,9 +165,8 @@ func_exp: BUILTIN_FUNC '(' exp_list ')'
         { $$ = new builtin_func_node($1, $3); }
     ;
 
-assign_exp: IDENTIFIER '=' exp  {
-          $$ = new assign_node($1, $3);
-        }  
+assign_exp: IDENTIFIER '=' exp  { $$ = new assign_node($1, $3);           }  
+        | array_ref '=' exp     { $$ = new assign_array_ref_node($1, $3); }
     ;
 %%
 
