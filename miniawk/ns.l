@@ -5,7 +5,7 @@
 #include "ns.tab.h"
 #include "ns_symtbl.h"
 
-extern void yyerror(const char *s);
+extern void yyerror(const char *s, ...);
 
 char *makebuffer(size_t n);
 

@@ -1,9 +1,11 @@
 %{
-#include <stdio.h>
 #include "ns_ast.h"
+#include <stdio.h>
+#include <stdarg.h>
+
 
 int yylex(void); 
-void yyerror(const char *s);
+void yyerror(const char *fmt, ...);
 
 #define YYDEBUG  1
 %}
@@ -132,7 +134,18 @@ exp:
     | STR               { $$ = new str_node($1);               }
     | REGEXSTR          { $$ = new regex_str_node($1);         }
     | NUM_INT           { $$ = new int_node($1);               }
+    | array_ref         { }
+    | array_def         { }
     ;
+
+array_ref: IDENTIFIER '[' exp ']' {
+                               
+                    }
+        ;
+
+array_def: '[' exp_list ']' {
+         }
+         ;
 
 exp_list: /* empty */ {$$ = NULL;}
     | exp             
@@ -161,9 +174,14 @@ assign_exp: IDENTIFIER '=' exp  {
     ;
 %%
 
-void yyerror(const char *s){
+void yyerror(const char *fmt, ...){
     extern int yylineno;
     extern char * yytext;
-    printf("* Error *, Line: %d, Msg: [%s] \n", yylineno, yytext);
+    va_list ap;
+    va_start(ap, fmt);
+    char msg[2048];
+    vsnprintf(msg, 2048, fmt, ap);
+    printf("* Error *, Line: %d, Token:[%s]. msg: %s \n", yylineno, yytext, msg);
+    va_end(ap);
 }
 

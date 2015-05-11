@@ -4,7 +4,7 @@
 
 #include "ns_value.h"
 struct cmdline_opt {
-    const char* filename;           // service type string
+    const char* filename;           
 };
 
 void print_usage() {
