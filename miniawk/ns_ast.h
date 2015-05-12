@@ -43,6 +43,18 @@ public:
     int type;
 };
 
+class def_func_node : public node {
+};
+
+class array_def_node : public node {
+};
+
+class array_ref_node : public node {
+};
+
+class identifier_list_node : public node {
+};
+
 class identifer_node : public node {
 public:
     identifer_node(symbol *s) : node(IDENTIFIER_NODE), sym(s) {

@@ -17,6 +17,7 @@ void yyerror(const char *fmt, ...);
     symbol          *sym;
     node            *ast;
     builtin_func_node   *ast_func;
+    def_func_node       *ast_def_func;
     assign_node         *ast_assign;
     exp_list_node       *ast_explist;
     rule_list_node      *ast_rules;
@@ -25,9 +26,13 @@ void yyerror(const char *fmt, ...);
     stmt_if_node        *ast_stmt_if;
     stmt_while_node     *ast_stmt_while;
     stmt_for_in_node    *ast_stmt_if_in;
+    array_def_node      *ast_array_def;
+    array_ref_node      *ast_array_ref;
+    identifier_list_node      *ast_identifier_list;
 };
 
-%token  IF ELSE AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE WHILE CMP_NE
+%token  AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE CMP_NE 
+%token  IF ELSE WHILE FUNC_DEF
 %token  MAIN
 
 %token <strval> STR REGEXSTR
@@ -35,13 +40,16 @@ void yyerror(const char *fmt, ...);
 %token <sym>    IDENTIFIER
 %token <intval> NUM_INT
 
-%type <ast>         pattern stmt exp
-%type <ast_func>    func_exp 
+%type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp
+             array_ref dot_call_method_exp
+%type <ast_func>    func_exp  
+%type <ast_def_func> def_func_exp 
 %type <ast_assign>  assign_exp 
 %type <ast_explist> exp_list
 %type <ast_rules>   rule_list
 %type <ast_rule>    rule
-%type <ast_stmt_list>  stmt_list;
+%type <ast_stmt_list>  stmt_list
+%type <ast_identifier_list> identifier_list
 
 /* Lowest to highest */
 %right '='
@@ -68,7 +76,7 @@ rule_list: /* empty */ { $$ = NULL; }
                             if ($$ == NULL) {
                                 $$ = new rule_list_node;
                             }
-                            $$ -> append($2);
+                            $$->append($2);
                        }
     ;
     
@@ -109,19 +117,26 @@ stmt_list: /* empty */    { $$ = NULL; }
         ;
 
 /* expression */
-exp:  
-    func_exp      {$$ = $1;}
-    | assign_exp  {$$ = $1;}
-    | '(' exp ')'       { $$ = $2; }
-    /* +, -, *, /, operator */
-    | exp '+' exp       { $$ = new operator_node('+', $1, $3); } 
+exp: binary_operator_exp
+   | binary_compare_exp
+   | primary_exp
+   | assign_exp {$$ = $1;}
+   | array_ref  {$$ = $1;}       
+   | dot_call_method_exp {$$=$1;}
+   ;
+
+/* +, -, *, /, operator */
+binary_operator_exp:
+      exp '+' exp       { $$ = new operator_node('+', $1, $3); } 
     | exp '-' exp       { $$ = new operator_node('-', $1, $3); }
     | exp '*' exp       { $$ = new operator_node('*', $1, $3); }
     | exp '/' exp       { $$ = new operator_node('/', $1, $3); }
     | exp '%' exp       { $$ = new operator_node('%', $1, $3); }
+    ;
 
-    /* comparation expression */
-    | exp CMP_GT exp    { $$ = new compare_node(CMP_GT, $1, $3); }
+/* comparation expression */
+binary_compare_exp:
+      exp CMP_GT exp    { $$ = new compare_node(CMP_GT, $1, $3); }
     | exp CMP_LS exp    { $$ = new compare_node(CMP_LS, $1, $3); }
     | exp CMP_EQ exp    { $$ = new compare_node(CMP_EQ, $1, $3); }
     | exp CMP_NE exp    { $$ = new compare_node(CMP_NE, $1, $3); }
@@ -129,20 +144,30 @@ exp:
     | exp CMP_GE exp    { $$ = new compare_node(CMP_GE, $1, $3); }
     | exp AND    exp    { $$ = new compare_node(AND, $1, $3);    }
     | exp OR     exp    { $$ = new compare_node(OR, $1, $3);     }
+    ;
     
+primary_exp:
+     '(' exp ')'        { $$ = $2; }
     | IDENTIFIER        { $$ = new identifer_node($1);         }
     | STR               { $$ = new str_node($1);               }
     | REGEXSTR          { $$ = new regex_str_node($1);         }
     | NUM_INT           { $$ = new int_node($1);               }
-    | array_ref         
-    | array_def         
+    | '[' exp_list ']'  { $$ = new array_def_node($2);         }
+    | func_exp          { $$ = $1; }
+    | def_func_exp      { $$ = $1; }
     ;
 
-array_ref: IDENTIFIER '[' exp ']' { $$ = new array_ref_node($1);}
-        ;
+array_ref:
+    primary_exp '[' exp ']' { $$ = new array_ref_node($1, $3);}
+    ;
 
-array_def: '[' exp_list ']' { $$ = new array_def($1); }
-         ;
+dot_call_method_exp:
+    primary_exp '.' IDENTIFIER '(' exp_list ')'  
+        {
+            $$ = new dot_call_method_node($1, $3, $5);
+        } 
+    ;
+    
 
 exp_list: /* empty */ {$$ = NULL;}
     | exp             
@@ -165,18 +190,44 @@ func_exp: BUILTIN_FUNC '(' exp_list ')'
         { $$ = new builtin_func_node($1, $3); }
     ;
 
+def_func_exp: FUNC_DEF IDENTIFIER '(' identifier_list ')' '{' stmt_list '}'
+        { $$ = new def_func_node($2, $4, $7);     }
+    ;
+
+identifier_list:  /* empty */ { $$ = NULL; }
+    | IDENTIFIER           
+      {
+        $$ = new identifier_list_node;
+        $$->append($1)
+      }
+
+    | identifier_list ',' IDENTIFIER
+      { 
+        $$  = $1;
+        if ($$ == NULL) {
+            $$ = new identifier_list_node;
+        }
+        $$->append($3);
+      }
+    ;
+
 assign_exp: IDENTIFIER '=' exp  { $$ = new assign_node($1, $3);           }  
         | array_ref '=' exp     { $$ = new assign_array_ref_node($1, $3); }
     ;
 %%
 
 void yyerror(const char *fmt, ...){
+
     extern int yylineno;
     extern char * yytext;
+    const int MAX_MSG_LEN = 2048;
+
     va_list ap;
     va_start(ap, fmt);
-    char msg[2048];
-    vsnprintf(msg, 2048, fmt, ap);
+
+    char msg[MAX_MSG_LEN];
+    vsnprintf(msg, MAX_MSG_LEN, fmt, ap);
+
     printf("* Error *, Line: %d, Token:[%s]. msg: %s \n", yylineno, yytext, msg);
     va_end(ap);
 }

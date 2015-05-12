@@ -20,6 +20,7 @@ char *makebuffer(size_t n);
 "for"   { return FOR; }
 "while" { return WHILE;}
 "main"  { return MAIN;}
+"def"   { return FUNC_DEF;}
 
 "and"   { return AND; }
 "or"    { return OR;  }
@@ -63,6 +64,7 @@ r{0,1}\"[^"]*\" {
                 yylval.strval = buff;
                 return STR;
                 }
+"\."|
 "[" |
 "]" |
 "=" |
