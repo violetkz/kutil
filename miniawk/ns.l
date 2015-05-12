@@ -64,7 +64,7 @@ r{0,1}\"[^"]*\" {
                 yylval.strval = buff;
                 return STR;
                 }
-"\."|
+"." |
 "[" |
 "]" |
 "=" |

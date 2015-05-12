@@ -19,6 +19,7 @@ void yyerror(const char *fmt, ...);
     builtin_func_node   *ast_func;
     def_func_node       *ast_def_func;
     assign_node         *ast_assign;
+    assign_array_ref_node *ast_assign_array_ref;
     exp_list_node       *ast_explist;
     rule_list_node      *ast_rules;
     rule_node           *ast_rule;
@@ -29,6 +30,7 @@ void yyerror(const char *fmt, ...);
     array_def_node      *ast_array_def;
     array_ref_node      *ast_array_ref;
     identifier_list_node      *ast_identifier_list;
+    dot_call_method_node      *ast_dot_call_method;
 };
 
 %token  AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE CMP_NE 
@@ -40,8 +42,8 @@ void yyerror(const char *fmt, ...);
 %token <sym>    IDENTIFIER
 %token <intval> NUM_INT
 
-%type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp
-             array_ref dot_call_method_exp
+%type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp 
+             array_ref 
 %type <ast_func>    func_exp  
 %type <ast_def_func> def_func_exp 
 %type <ast_assign>  assign_exp 
@@ -50,6 +52,8 @@ void yyerror(const char *fmt, ...);
 %type <ast_rule>    rule
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
+%type <ast_dot_call_method> dot_call_method_exp
+%type <ast_assign_array_ref> assign_array_ref_exp;
 
 /* Lowest to highest */
 %right '='
@@ -121,6 +125,7 @@ exp: binary_operator_exp
    | binary_compare_exp
    | primary_exp
    | assign_exp {$$ = $1;}
+   | assign_array_ref_exp {$$ = $1}
    | array_ref  {$$ = $1;}       
    | dot_call_method_exp {$$=$1;}
    ;
@@ -198,7 +203,8 @@ identifier_list:  /* empty */ { $$ = NULL; }
     | IDENTIFIER           
       {
         $$ = new identifier_list_node;
-        $$->append($1)
+        //$$->append($1)
+        $$->push_back($1);
       }
 
     | identifier_list ',' IDENTIFIER
@@ -207,12 +213,16 @@ identifier_list:  /* empty */ { $$ = NULL; }
         if ($$ == NULL) {
             $$ = new identifier_list_node;
         }
-        $$->append($3);
+        //$$->append($3);
+        $$->push_back($3);
       }
     ;
 
-assign_exp: IDENTIFIER '=' exp  { $$ = new assign_node($1, $3);           }  
-        | array_ref '=' exp     { $$ = new assign_array_ref_node($1, $3); }
+assign_exp: IDENTIFIER '=' exp  
+    { $$ = new assign_node($1, $3);           }
+    ; 
+assign_array_ref_exp: array_ref '=' exp     
+    { $$ = new assign_array_ref_node($1, $3); }
     ;
 %%
 

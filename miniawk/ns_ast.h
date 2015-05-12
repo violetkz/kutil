@@ -31,7 +31,12 @@ public:
         STMT_LIST_NODE,
         STMT_FOR_IN_NODE,
         OPERATOR_NODE,
-        COMPARE_NODE
+        COMPARE_NODE,
+        ARRAY_DEF_NODE,
+        ARRAY_REF_NODE,
+        DEF_FUNC_NODE,
+        DOT_CALL_METHOD_NODE,
+        ASSIGN_ARRAY_REF_NODE
     };
     
     node(int t) : type(t) {}
@@ -59,30 +64,74 @@ private:
     std::list<T*> nlist;
 };
 
+typedef std::list<symbol *> identifier_list_node;
+
+typedef node_list<node, node::EXPLIST_NODE> explist_base;
+class exp_list_node : public  explist_base {
+public:
+    exp_list_node() : explist_base() {}
+    ns_value eval();
+};
 
 class def_func_node : public node {
 public:
-    def_func_node(node *name, identifier_list_node *args, node *stmts)
-        : func_name(name), arg_list(args), stmt_list(stmts) {
+    def_func_node(symbol *name, identifier_list_node *args, node *stmts)
+        :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
     }
+    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
-    node                 *func_name;
+    symbol               *func_name;
     node                 *stmt_list;
     identifier_list_node *arg_list;
 };
 
 class array_def_node : public node {
+public:
+    array_def_node(exp_list_node* elems)
+        : node(ARRAY_DEF_NODE), elements(elems) {
+    }
+    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+public:
+    exp_list_node *elements;
 };
 
 class array_ref_node : public node {
+public:
+    array_ref_node(node *pexp, node *idx_exp)
+        : node(ARRAY_REF_NODE), postfix(pexp), index(idx_exp) {
+    }
+    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+public:
+    node *postfix;
+    node *index;
 };
 
-typedef node_list<node, node::IDENTIFIER_LIST_NODE> identifier_list_base;
-class identifier_list_node : public identifier_list_base {
+class assign_array_ref_node : public node {
 public:
-    identifer_node() : identifier_list_base();
-    ns_value eval();
+    assign_array_ref_node(node *array_ref, node *exp) 
+        :node(ASSIGN_ARRAY_REF_NODE), left(array_ref), right(exp) {
+        }
+    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+public:
+    node *left;
+    node *right;
 };
+
+class dot_call_method_node : public node {
+public:
+    dot_call_method_node(node *pexp, symbol *func_name, node *arglist)
+        : node(DOT_CALL_METHOD_NODE), 
+        postfix(pexp),
+        name(func_name),
+        args(arglist) {
+     }
+    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+public:
+    node    *postfix;
+    symbol  *name;
+    node    *args;
+};
+
 
 class identifer_node : public node {
 public:
@@ -122,7 +171,6 @@ public:
         :node(REGEX_STR_NODE), regex_str(str) {
         /* do nothing */  
     }
-
 public:
     char *regex_str;
 };
@@ -149,12 +197,6 @@ public:
     ns_value eval();
 };
 
-typedef node_list<node, node::EXPLIST_NODE> explist_base;
-class exp_list_node : public  explist_base {
-public:
-    exp_list_node() : explist_base() {}
-    ns_value eval();
-};
 
 typedef node_list<node, node::STMT_LIST_NODE> stmt_list_base;
 class stmt_list_node : public stmt_list_base {
