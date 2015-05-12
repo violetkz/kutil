@@ -24,6 +24,7 @@ public:
         EXP_NODE, 
         EXPLIST_NODE,
         IDENTIFIER_NODE,
+        IDENTIFIER_LIST_NODE,
         NUM_INT_NODE,
         STMT_WHILE_NODE,
         STMT_IF_NODE,
@@ -43,7 +44,31 @@ public:
     int type;
 };
 
+template<typename T, int NS_NODE_TYPE> 
+class node_list : public node 
+{
+public:
+    typedef typename std::list<T*>::iterator nl_iter;
+    node_list(): node(NS_NODE_TYPE) {}
+
+    inline void append(T* n) { nlist.push_back(n); }
+    inline nl_iter begin() { return nlist.begin(); }
+    inline nl_iter end() { return nlist.end(); }
+    
+private:
+    std::list<T*> nlist;
+};
+
+
 class def_func_node : public node {
+public:
+    def_func_node(node *name, identifier_list_node *args, node *stmts)
+        : func_name(name), arg_list(args), stmt_list(stmts) {
+    }
+public:
+    node                 *func_name;
+    node                 *stmt_list;
+    identifier_list_node *arg_list;
 };
 
 class array_def_node : public node {
@@ -52,7 +77,11 @@ class array_def_node : public node {
 class array_ref_node : public node {
 };
 
-class identifier_list_node : public node {
+typedef node_list<node, node::IDENTIFIER_LIST_NODE> identifier_list_base;
+class identifier_list_node : public identifier_list_base {
+public:
+    identifer_node() : identifier_list_base();
+    ns_value eval();
 };
 
 class identifer_node : public node {
@@ -111,21 +140,6 @@ public:
 public:
     node *pattern;
     node *action;
-};
-
-template<typename T, int NS_NODE_TYPE> 
-class node_list : public node 
-{
-public:
-    typedef typename std::list<T*>::iterator nl_iter;
-    node_list(): node(NS_NODE_TYPE) {}
-
-    inline void append(T* n) { nlist.push_back(n); }
-    inline nl_iter begin() { return nlist.begin(); }
-    inline nl_iter end() { return nlist.end(); }
-    
-private:
-    std::list<T*> nlist;
 };
 
 typedef node_list<rule_node, node::RULE_LIST_NODE> rule_list_base;
