@@ -169,3 +169,12 @@ ns_value array_def_node::eval() {
     }
     return v_list;
 }
+
+ns_value array_ref_node::eval() {
+    ns_value pv = postfix->eval();
+    if (pv.is_iteratale()) {
+        ns_value idx = index->eval();        
+        if (idx.is_int()) {
+        }
+    }
+}

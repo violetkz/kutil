@@ -100,10 +100,7 @@ public:
     array_ref_node(node *pexp, node *idx_exp)
         : node(ARRAY_REF_NODE), postfix(pexp), index(idx_exp) {
     }
-    ns_value eval() {
-        puts("array_ref_node\n");
-        return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
-    }
+    ns_value eval();
 public:
     node *postfix;
     node *index;

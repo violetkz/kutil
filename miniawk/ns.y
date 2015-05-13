@@ -195,7 +195,7 @@ func_exp: BUILTIN_FUNC '(' exp_list ')'
     ;
 
 def_func_exp: FUNC_DEF IDENTIFIER '(' identifier_list ')' '{' stmt_list '}'
-        { $$ = new def_func_node($2, $4, $7);     }
+        { $$ = new def_func_node($2, $4, $7); }
     ;
 
 identifier_list:  /* empty */ { $$ = NULL; }
@@ -218,7 +218,7 @@ identifier_list:  /* empty */ { $$ = NULL; }
     ;
 
 assign_exp: IDENTIFIER '=' exp  
-    { $$ = new assign_node($1, $3);           }
+    { $$ = new assign_node($1, $3);}
     ; 
 assign_array_ref_exp: array_ref '=' exp     
     { $$ = new assign_array_ref_node($1, $3); }

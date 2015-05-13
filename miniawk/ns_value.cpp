@@ -11,6 +11,19 @@ bool ns_value::is_ref_count_type(ns_value_type t) {
    return (need_ref_count_bit_map | (1 << t)) ? true : false;
 }
 
+bool is_illegal_value() {
+    return (type == NSVAL_ILLEGAL) ? true : false;
+}
+
+bool ns_value::is_iteratale(){
+    return (type == NSVAL_LITERAL_STR 
+            || type == NSVAL_LIST) ?  true : false
+}
+
+bool ns_value::is_int() {
+    return (type == NSVAL_INTEGER) ? true : false;
+}
+
 ns_value::ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0) {
     switch (type) {
         case NSVAL_UNINITIALIZED:

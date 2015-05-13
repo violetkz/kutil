@@ -50,7 +50,9 @@ public:
     operator bool();
     //ns_value operator! (); 
     //
-    bool is_illegal_value() const {return (type == NSVAL_ILLEGAL) ? true : false;}
+    inline bool is_illegal_value() const; {return (type == NSVAL_ILLEGAL) ? true : false;}
+    inline bool is_iteratale() const; 
+    inline bool is_int() const;
 
 private:
     inline void add_ref(); 
