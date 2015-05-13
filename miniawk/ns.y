@@ -101,8 +101,8 @@ stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6); }
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6, $10); }
-        | exp ';'
-                { $$ = $1; }
+        | def_func_exp      { $$ = $1; }
+        | exp ';'           { $$ = $1; }
         /*
         | BREAK ';'
         | CONTINUE ';'
@@ -125,7 +125,7 @@ exp: binary_operator_exp
    | binary_compare_exp
    | primary_exp
    | assign_exp {$$ = $1;}
-   | assign_array_ref_exp {$$ = $1}
+   | assign_array_ref_exp {$$ = $1;}
    | array_ref  {$$ = $1;}       
    | dot_call_method_exp {$$=$1;}
    ;
@@ -159,7 +159,6 @@ primary_exp:
     | NUM_INT           { $$ = new int_node($1);               }
     | '[' exp_list ']'  { $$ = new array_def_node($2);         }
     | func_exp          { $$ = $1; }
-    | def_func_exp      { $$ = $1; }
     ;
 
 array_ref:

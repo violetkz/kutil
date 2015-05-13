@@ -29,7 +29,7 @@ public:
         int                 int_val;    /* value for integer or status */
         bool                bool_val;   /* value for boolean */
         std::string         *chr_val;   /* value for string  */
-        std::list<node *>   *list_val;  /* value for list    */
+        std::list<ns_value> *list_val;  /* value for list    */
         node                *node_val;  /* placeholder. not implemention. */
     };
 
@@ -41,7 +41,7 @@ public:
     explicit ns_value(int v) : type(NSVAL_INTEGER), int_val(v) ,ref_count(0) {}
     explicit ns_value(bool b) : type(NSVAL_BOOLEAN), bool_val(b) ,ref_count(0){}
     explicit ns_value(const char *s);
-    explicit ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0){}
+    explicit ns_value(ns_value_type t);
     explicit ns_value(ns_value_type t, ns_status_type status) 
             : type(t), int_val(status), ref_count(0){}
     inline int count() const {return (ref_count) ? *ref_count : 0;}
@@ -49,11 +49,16 @@ public:
 
     operator bool();
     //ns_value operator! (); 
+    //
+    bool is_illegal_value() const { return (type == NSVAL_ILLEGAL) ? true : false; }
+
 private:
     inline void add_ref(); 
     inline void release();
     inline void destruct();
+    static bool is_ref_count_type(ns_value_type t);
 private:
+    static const int need_ref_count_bit_map;
     int *ref_count;
 };
 

@@ -156,3 +156,17 @@ ns_value stmt_list_node::eval() {
     }
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
+
+
+ns_value array_def_node::eval() {
+    
+    exp_list_node::nl_iter it = elements->begin();
+    ns_value v_list(NSVAL_LIST);
+    for (; it != elements->end(); ++it) {
+        ns_value v = (*it)->eval();     
+        if (! v.is_illegal_value()) {
+            v_list.list_val->push_back(v);
+        }
+    }
+    return v_list;
+}

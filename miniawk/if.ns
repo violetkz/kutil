@@ -16,4 +16,6 @@ main {
             print ("else test"); 
         }
     }
+    x = ["x", 1, "999"];
+    print (x);
 }

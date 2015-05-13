@@ -90,7 +90,7 @@ public:
     array_def_node(exp_list_node* elems)
         : node(ARRAY_DEF_NODE), elements(elems) {
     }
-    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value eval();// {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
     exp_list_node *elements;
 };
