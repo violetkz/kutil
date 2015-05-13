@@ -4,7 +4,7 @@
 #include <algorithm>
 
 const int ns_value::need_ref_count_bit_map =
-        (1 << NSVAL_LITERAL_STR) 
+          (1 << NSVAL_LITERAL_STR) 
         | (1 << NSVAL_LIST);
 
 bool ns_value::is_ref_count_type(ns_value_type t) {
@@ -41,7 +41,6 @@ ns_value::ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0) {
 
 void ns_value::destruct() {
     if (is_ref_count_type(type) && ref_count != NULL) {
-        //if (type == NSVAL_LITERAL_STR &&  ref_count != NULL )
         if (*ref_count == 1) {
             switch (type) {
                 case NSVAL_LITERAL_STR:
@@ -101,6 +100,7 @@ ns_value::ns_value(const ns_value &s)
     }
     else if (type == NSVAL_INTEGER)  int_val  = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
+    else if (type == NSVAL_LIST)     list_val = s.list_val;
     else  int_val = 0;
 }
 
@@ -119,7 +119,7 @@ ns_value &ns_value::operator = (const ns_value &s) {
     }
     else if (type == NSVAL_INTEGER)  int_val = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
-
+    else if (type == NSVAL_LIST)     list_val = s.list_val;
     return *this;
 }
 
@@ -138,7 +138,9 @@ ns_value::operator bool() {
             v = (chr_val->size() > 0) ? true : false;
             break;
         default:
-            std::cerr << "warning. can't convert to boolean from type:" << *this << std::endl;
+            std::cerr 
+                << "warning. can't convert to boolean from type:" 
+                << *this << std::endl;
             break; 
     }
     return v;
@@ -224,7 +226,9 @@ ns_value operator% (const ns_value &l, const ns_value &r) {
 bool operator == (const ns_value &l, const ns_value &r) {
     bool v = false;
     if (l.type != r.type) {
-        std::cerr << "warning! can't compare the values with different type." << std::endl;
+        std::cerr 
+            << "warning! can't compare the values with different type." 
+            << std::endl;
         return v;
     }
     switch (l.type) {
@@ -239,7 +243,10 @@ bool operator == (const ns_value &l, const ns_value &r) {
             v = (l.bool_val == r.bool_val) ? true : false;
             break;
         default:
-            std::cerr << "warning. can't convert to boolean from type:%s\n" << l << std::endl;
+            std::cerr 
+                << "warning. can't convert to boolean from type:" 
+                << l 
+                << std::endl;
             break; 
     }
     return v;
@@ -252,7 +259,9 @@ bool operator != (const ns_value &l, const ns_value &r) {
 bool operator > (const ns_value &l, const ns_value &r) {
     bool v = false;
     if (l.type != r.type) {
-        std::cerr << "warning! can't compare the values with different type." << std::endl;
+        std::cerr 
+            << "warning! can't compare the values with different type." 
+            << std::endl;
         return v;
     }
     switch (l.type) {
@@ -267,7 +276,9 @@ bool operator > (const ns_value &l, const ns_value &r) {
             v = (l.bool_val > r.bool_val) ? true : false;
             break;
         default:
-            std::cerr << "warning. can't convert to boolean from type:%s\n" << l << std::endl;
+            std::cerr
+                << "warning. can't convert to boolean from type:"
+                << l << std::endl;
             break; 
     }
     return v;

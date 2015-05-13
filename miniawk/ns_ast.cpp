@@ -159,7 +159,6 @@ ns_value stmt_list_node::eval() {
 
 
 ns_value array_def_node::eval() {
-    
     exp_list_node::nl_iter it = elements->begin();
     ns_value v_list(NSVAL_LIST);
     for (; it != elements->end(); ++it) {
