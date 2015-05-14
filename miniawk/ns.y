@@ -19,7 +19,7 @@ void yyerror(const char *fmt, ...);
     builtin_func_node   *ast_func;
     def_func_node       *ast_def_func;
     assign_node         *ast_assign;
-    assign_array_ref_node *ast_assign_array_ref;
+    assign_array_elem_node *ast_assign_array_elem;
     exp_list_node       *ast_explist;
     rule_list_node      *ast_rules;
     rule_node           *ast_rule;
@@ -53,7 +53,7 @@ void yyerror(const char *fmt, ...);
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
 %type <ast_dot_call_method> dot_call_method_exp
-%type <ast_assign_array_ref> assign_array_ref_exp;
+%type <ast_assign_array_elem> assign_array_elem_exp;
 
 /* Lowest to highest */
 %right '='
@@ -125,7 +125,7 @@ exp: binary_operator_exp
    | binary_compare_exp
    | primary_exp
    | assign_exp {$$ = $1;}
-   | assign_array_ref_exp {$$ = $1;}
+   | assign_array_elem_exp {$$ = $1;}
    | array_ref  {$$ = $1;}       
    | dot_call_method_exp {$$=$1;}
    ;
@@ -220,8 +220,8 @@ identifier_list:  /* empty */ { $$ = NULL; }
 assign_exp: IDENTIFIER '=' exp  
     { $$ = new assign_node($1, $3);}
     ; 
-assign_array_ref_exp: array_ref '=' exp     
-    { $$ = new assign_array_ref_node($1, $3); }
+assign_array_elem_exp: primary_exp '[' exp ']' '=' exp     
+    { $$ = new assign_array_elem_node($1,$3,$6); }
     ;
 %%
 

@@ -13,6 +13,7 @@ enum ns_value_type {
     NSVAL_ILLEGAL       = 5, /* illegal */
     NSVAL_STATUS        = 6, /* stmt stauts */
     NSVAL_LIST          = 7, /* list */
+    NSVAL_CHAR          = 8, /* char */
 };
 
 enum ns_status_type {
@@ -26,11 +27,12 @@ class ns_value {
 public:
     ns_value_type type;
     union {
-        int                 int_val;    /* value for integer or status */
-        bool                bool_val;   /* value for boolean */
-        std::string         *chr_val;   /* value for string  */
-        std::list<ns_value> *list_val;  /* value for list    */
-        node                *node_val;  /* placeholder. not implemention. */
+        //char                    chr_val;    /* value for char */
+        int                     int_val;    /* value for integer or status */
+        bool                    bool_val;   /* value for boolean */
+        std::string             *chr_val;   /* value for string  */
+        node                    *node_val;  /* placeholder. not implemention. */
+        std::list<ns_value>     *list_val;  /* value for array    */
     };
 
 public: 
@@ -48,11 +50,18 @@ public:
     ns_value &operator = (const ns_value &s);
 
     operator bool();
-    //ns_value operator! (); 
-    //
-    inline bool is_illegal_value() const; {return (type == NSVAL_ILLEGAL) ? true : false;}
-    inline bool is_iteratale() const; 
-    inline bool is_int() const;
+
+    inline bool is_int() const {
+        return (type == NSVAL_INTEGER); 
+    }
+
+    inline bool is_illegal_value() const { 
+        return (type == NSVAL_ILLEGAL);
+    }
+
+    inline bool is_iteratale() const { 
+        return (type == NSVAL_LITERAL_STR || type == NSVAL_LIST); 
+    }
 
 private:
     inline void add_ref(); 
@@ -78,4 +87,7 @@ bool operator <  (const ns_value &l, const ns_value &r);
 bool operator <= (const ns_value &l, const ns_value &r);
 bool operator >= (const ns_value &l, const ns_value &r);
 
+
+ns_value get_elem(const ns_value &n, unsigned int index);
+const ns_value& set_elem(const ns_value &n, unsigned int index, const ns_value &v);
 #endif  //~ns_value_h___

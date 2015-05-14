@@ -90,7 +90,7 @@ public:
     array_def_node(exp_list_node* elems)
         : node(ARRAY_DEF_NODE), elements(elems) {
     }
-    ns_value eval();// {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value eval();
 public:
     exp_list_node *elements;
 };
@@ -106,15 +106,17 @@ public:
     node *index;
 };
 
-class assign_array_ref_node : public node {
+class assign_array_elem_node : public node {
 public:
-    assign_array_ref_node(node *array_ref, node *exp) 
-        :node(ASSIGN_ARRAY_REF_NODE), left(array_ref), right(exp) {
+    assign_array_elem_node(node *p, node *idx, node *v) 
+        :node(ASSIGN_ARRAY_REF_NODE),
+        postfix(p), index(idx), rvalue(v) {
         }
-    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value eval();
 public:
-    node *left;
-    node *right;
+    node *postfix;
+    node *index;
+    node *rvalue;
 };
 
 class dot_call_method_node : public node {
@@ -234,13 +236,14 @@ public:
 class stmt_if_node : public node {
 public:
     stmt_if_node(node *condition, stmt_list_node *action) 
-        : node(STMT_IF_NODE), condition_exp(condition), stmts(action), else_stmts(NULL) {
+        : node(STMT_IF_NODE), condition_exp(condition), 
+        stmts(action), else_stmts(NULL) {
      }
 
-    stmt_if_node(node *condition,
-            stmt_list_node *action,
+    stmt_if_node(node *condition, stmt_list_node *action,
             stmt_list_node *else_action)
-        : node(STMT_IF_NODE), condition_exp(condition), stmts(action), else_stmts(else_action) {
+        : node(STMT_IF_NODE), condition_exp(condition),
+        stmts(action), else_stmts(else_action) {
      }
 
     ns_value eval();
