@@ -3,7 +3,6 @@
 
 #include "ns_value.h"
 
-
 /* symbol info */
 struct symbol {
     std::string id;
