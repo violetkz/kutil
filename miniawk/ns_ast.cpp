@@ -49,11 +49,6 @@ ns_value assign_node::eval() {
     return variable_name->value;
 }
 
-#if 0
-    node *postfix;
-    node *index;
-    node *rvalue;
-#endif
 ns_value assign_array_elem_node::eval() {
     ns_value pv = postfix->eval();
 
