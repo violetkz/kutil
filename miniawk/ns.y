@@ -38,7 +38,6 @@ void yyerror(const char *fmt, ...);
 %token  MAIN
 
 %token <strval> STR REGEXSTR  IDENTIFIER
-//%token <ast_identifier> IDENTIFIER
 %token <fn>     BUILTIN_FUNC
 %token <intval> NUM_INT
 
@@ -52,7 +51,6 @@ void yyerror(const char *fmt, ...);
 %type <ast_rule>    rule
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
-//%type <ast_identifier> 
 %type <ast_dot_call_method> dot_call_method_exp
 %type <ast_assign_array_elem> assign_array_elem_exp;
 
