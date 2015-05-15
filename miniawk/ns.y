@@ -13,7 +13,6 @@ void yyerror(const char *fmt, ...);
     char *strval;
     int   intval;
     char *fn;
-    /* symbol          *sym; */
     node            *ast;
     builtin_func_node   *ast_func;
     def_func_node       *ast_def_func;
@@ -28,7 +27,7 @@ void yyerror(const char *fmt, ...);
     stmt_for_in_node    *ast_stmt_if_in;
     array_def_node      *ast_array_def;
     array_ref_node      *ast_array_ref;
-    identifer_node      *ast_identifier;
+    variable_node       *ast_variable;
     identifier_list_node      *ast_identifier_list;
     dot_call_method_node      *ast_dot_call_method;
 };
@@ -52,7 +51,8 @@ void yyerror(const char *fmt, ...);
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
 %type <ast_dot_call_method> dot_call_method_exp
-%type <ast_assign_array_elem> assign_array_elem_exp;
+%type <ast_assign_array_elem> assign_array_elem_exp
+%type <ast_variable> variable
 
 /* Lowest to highest */
 %right '='
@@ -152,13 +152,16 @@ binary_compare_exp:
     
 primary_exp:
      '(' exp ')'        { $$ = $2; }
-    | IDENTIFIER        { $$ = new identifer_node($1);         }
+    /*| IDENTIFIER        { $$ = new variable_node($1);         } */
     | STR               { $$ = new str_node($1);               }
     | REGEXSTR          { $$ = new regex_str_node($1);         }
     | NUM_INT           { $$ = new int_node($1);               }
     | '[' exp_list ']'  { $$ = new array_def_node($2);         }
     | func_exp          { $$ = $1; }
+    | variable
     ;
+
+variable: IDENTIFIER { $$ = new variable_node($1); }
 
 array_ref:
     primary_exp '[' exp ']' { $$ = new array_ref_node($1, $3);}
@@ -205,7 +208,7 @@ identifier_list:  /* empty */ { $$ = NULL; }
         $$->push_back($1);
       }
 
-    | identifier_list ',' IDENTIFIER
+    | identifier_list ',' variable
       { 
         $$  = $1;
         if ($$ == NULL) {
