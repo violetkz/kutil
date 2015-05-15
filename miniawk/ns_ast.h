@@ -52,6 +52,47 @@ public:
     int type;
 };
 
+class identifer_node : public node {
+public:
+    identifer_node(char *s) : node(IDENTIFIER_NODE), id(s) {}
+    ns_value eval(ns_rt_context *rtctx = NULL);
+public:
+    //symbol *sym;
+    std::string id;
+};
+
+/* string node */
+class int_node : public node {
+public:
+    int_node(int n) : node(NUM_INT_NODE), i(n) {
+        /* do nothing */
+    }
+    ns_value eval(ns_rt_context *rtctx = NULL);
+public:
+    int i;
+};
+
+/* string node */
+class str_node : public node {
+public:
+    str_node(char *s) : node(STR_NODE), str(s) {
+        /* do nothing */
+    }
+    ns_value eval(ns_rt_context *rtctx = NULL);
+public:
+    char *str;
+};
+
+class regex_str_node : public node {
+public:
+    regex_str_node(char *str)
+        :node(REGEX_STR_NODE), regex_str(str) {
+        /* do nothing */  
+    }
+public:
+    char *regex_str;
+};
+
 template<typename T, int NS_NODE_TYPE> 
 class node_list : public node 
 {
@@ -67,7 +108,7 @@ private:
     std::list<T*> nlist;
 };
 
-typedef std::list<symbol *> identifier_list_node;
+typedef std::list<identifer_node *> identifier_list_node;
 
 typedef node_list<node, node::EXPLIST_NODE> explist_base;
 class exp_list_node : public  explist_base {
@@ -78,12 +119,12 @@ public:
 
 class def_func_node : public node {
 public:
-    def_func_node(symbol *name, identifier_list_node *args, node *stmts)
+    def_func_node(identifer_node *name, identifier_list_node *args, node *stmts)
         :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
     }
     ns_value eval(ns_rt_context *rtctx = NULL) {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
-    symbol               *func_name;
+    identifer_node       *func_name;
     node                 *stmt_list;
     identifier_list_node *arg_list;
 };
@@ -124,7 +165,7 @@ public:
 
 class dot_call_method_node : public node {
 public:
-    dot_call_method_node(node *pexp, symbol *func_name, node *arglist)
+    dot_call_method_node(node *pexp, identifer_node *func_name, node *arglist)
         : node(DOT_CALL_METHOD_NODE), 
         postfix(pexp),
         name(func_name),
@@ -133,52 +174,12 @@ public:
     ns_value eval(ns_rt_context *rtctx = NULL) {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
     node    *postfix;
-    symbol  *name;
+    //symbol  *name;
+    identifer_node    *name;
     node    *args;
 };
 
 
-class identifer_node : public node {
-public:
-    identifer_node(symbol *s) : node(IDENTIFIER_NODE), sym(s) {
-        /* do nothing */
-    }
-    ns_value eval(ns_rt_context *rtctx = NULL);
-public:
-    symbol *sym;
-};
-
-/* string node */
-class int_node : public node {
-public:
-    int_node(int n) : node(NUM_INT_NODE), i(n) {
-        /* do nothing */
-    }
-    ns_value eval(ns_rt_context *rtctx = NULL);
-public:
-    int i;
-};
-
-/* string node */
-class str_node : public node {
-public:
-    str_node(char *s) : node(STR_NODE), str(s) {
-        /* do nothing */
-    }
-    ns_value eval(ns_rt_context *rtctx = NULL);
-public:
-    char *str;
-};
-
-class regex_str_node : public node {
-public:
-    regex_str_node(char *str)
-        :node(REGEX_STR_NODE), regex_str(str) {
-        /* do nothing */  
-    }
-public:
-    char *regex_str;
-};
 
 class rule_node : public node {
 public:
@@ -212,7 +213,7 @@ public:
 
 class assign_node : public node {
 public:
-    assign_node(symbol *id, node *val)
+    assign_node(identifer_node *id, node *val)
             : node(ASSIGN_NODE),
              variable_name(id), 
              rvalue(val) {
@@ -221,7 +222,7 @@ public:
     ns_value eval(ns_rt_context *rtctx = NULL);
 
 public:
-    symbol *variable_name;
+    identifer_node *variable_name;
     node *rvalue;
 };
 
@@ -258,13 +259,13 @@ public:
 
 class stmt_for_in_node : public node {
 public:
-    stmt_for_in_node(symbol *tmp, symbol *ln, stmt_list_node *stmt_list)
+    stmt_for_in_node(identifer_node *tmp, identifer_node *ln, stmt_list_node *stmt_list)
         : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
     }
     ns_value eval(ns_rt_context *rtctx = NULL);
 public:
-    symbol  *tmp_id;
-    symbol  *id; 
+    identifer_node  *tmp_id;
+    identifer_node  *id; 
     stmt_list_node  *stmts;
 };
 

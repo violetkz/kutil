@@ -12,7 +12,11 @@ struct symbol {
     symbol():id(), value() {}
 };
 
-symbol *install_symbol(const char *name);
-symbol *find_symbol(const char *name, ns_rt_context *rt);
+/* symbol table */
+typedef std::map<std::string, symbol*> symtbl;
+typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
+
+symbol *check_symbol(const std::string& name, ns_rt_context *rt);
+symbol *find_symbol(const std::string& name, ns_rt_context *rt);
 
 #endif //~ns_symtbl_hpp__

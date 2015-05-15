@@ -10,6 +10,9 @@
 extern void free_strval(char*);
 
 ns_value identifer_node::eval(ns_rt_context *rtctx) {
+    symbol *syn = check_symbol(id, rtctx);
+    if (!s) { //xxx
+    }
     return sym->value;
 }
 
@@ -197,5 +200,13 @@ ns_value array_ref_node::eval(ns_rt_context *rtctx) {
             << "the object is not iteratable" << std::endl;
 
     return ns_value(NSVAL_ILLEGAL);
+}
+
+def_func_node::def_func_node(identifer_node *name, identifier_list_node *args, node *stmts)
+    :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
+}
+
+ns_value def_func_node::eval(ns_rt_context *rtctx) {
+    return ;
 }
 

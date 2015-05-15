@@ -40,8 +40,8 @@ char *makebuffer(size_t n);
 
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
 [A-Za-z_][A-Za-z0-9_]*  { 
-                yylval.sym = install_symbol(yytext);
-                /* yylval.strval = yytext;  */
+                /* yylval.sym = check_symbol(yytext);  */
+                yylval.strval = yytext;
                 return IDENTIFIER; 
                }
 r{0,1}\"[^"]*\" { 

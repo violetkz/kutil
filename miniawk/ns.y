@@ -13,7 +13,7 @@ void yyerror(const char *fmt, ...);
     char *strval;
     int   intval;
     char *fn;
-    symbol          *sym;
+    /* symbol          *sym; */
     node            *ast;
     builtin_func_node   *ast_func;
     def_func_node       *ast_def_func;
@@ -28,6 +28,7 @@ void yyerror(const char *fmt, ...);
     stmt_for_in_node    *ast_stmt_if_in;
     array_def_node      *ast_array_def;
     array_ref_node      *ast_array_ref;
+    identifer_node      *ast_identifier;
     identifier_list_node      *ast_identifier_list;
     dot_call_method_node      *ast_dot_call_method;
 };
@@ -36,9 +37,9 @@ void yyerror(const char *fmt, ...);
 %token  IF ELSE WHILE FUNC_DEF
 %token  MAIN
 
-%token <strval> STR REGEXSTR
+%token <strval> STR REGEXSTR  IDENTIFIER
+//%token <ast_identifier> IDENTIFIER
 %token <fn>     BUILTIN_FUNC
-%token <sym>    IDENTIFIER
 %token <intval> NUM_INT
 
 %type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp 
@@ -51,6 +52,7 @@ void yyerror(const char *fmt, ...);
 %type <ast_rule>    rule
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
+//%type <ast_identifier> 
 %type <ast_dot_call_method> dot_call_method_exp
 %type <ast_assign_array_elem> assign_array_elem_exp;
 
