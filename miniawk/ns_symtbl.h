@@ -2,6 +2,7 @@
 #define ns_symtbl_hpp__
 
 #include "ns_value.h"
+#include "ns_rtctx.h"
 
 /* symbol info */
 struct symbol {
@@ -12,6 +13,6 @@ struct symbol {
 };
 
 symbol *install_symbol(const char *name);
-symbol *find_symbol(const char *name);
+symbol *find_symbol(const char *name, ns_rt_context *rt);
 
 #endif //~ns_symtbl_hpp__

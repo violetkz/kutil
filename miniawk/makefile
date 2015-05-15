@@ -1,4 +1,4 @@
-CPPFLAGS=-g
+CPPFLAGS=-g --std=gnu++0x
 
 all: ns
 

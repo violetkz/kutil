@@ -44,12 +44,21 @@ symbol *install_symbol(const char *name) {
 /* find a symbol from table by name and return pointer of symbol if existed
  * esle return NULL 
  */ 
-symbol *find_symbol(const char *name) {
+symbol *find_symbol(const char *name, ns_rt_context *rt) {
     symbol *re = NULL;
-    
-    ns_symtbl::symtbl *tbl = ns_symtbl::get_tbl();
-
     std::string id(name);
+
+    /* search local symbol table, firstly */
+    if (rt && rt->local_env) {
+        auto it = rt->local_env->find(id);
+        if (it != rt->local_env->end()) {
+            re = (*rt->local_env)[id]; 
+            return re;
+        }
+    }
+    
+    /* search global symbol tablel. */
+    ns_symtbl::symtbl *tbl = ns_symtbl::get_tbl();
     ns_symtbl::symtbl_iterator it = tbl->find(id);
 
     if (it != tbl->end()) {

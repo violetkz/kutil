@@ -6,6 +6,7 @@
 #include <string>
 
 #include "ns_value.h"
+#include "ns_rtctx.h"
 
 struct symbol;
 
@@ -43,7 +44,9 @@ public:
     virtual ~node() {}
 
     /* eval */
-    virtual ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    virtual ns_value eval(ns_rt_context *rtctx = NULL) {
+        return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
+    }
     
 public:
     int type;
@@ -70,7 +73,7 @@ typedef node_list<node, node::EXPLIST_NODE> explist_base;
 class exp_list_node : public  explist_base {
 public:
     exp_list_node() : explist_base() {}
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 };
 
 class def_func_node : public node {
@@ -78,7 +81,7 @@ public:
     def_func_node(symbol *name, identifier_list_node *args, node *stmts)
         :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
     }
-    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value eval(ns_rt_context *rtctx = NULL) {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
     symbol               *func_name;
     node                 *stmt_list;
@@ -90,7 +93,7 @@ public:
     array_def_node(exp_list_node* elems)
         : node(ARRAY_DEF_NODE), elements(elems) {
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     exp_list_node *elements;
 };
@@ -100,7 +103,7 @@ public:
     array_ref_node(node *pexp, node *idx_exp)
         : node(ARRAY_REF_NODE), postfix(pexp), index(idx_exp) {
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     node *postfix;
     node *index;
@@ -112,7 +115,7 @@ public:
         :node(ASSIGN_ARRAY_REF_NODE),
         postfix(p), index(idx), rvalue(v) {
         }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     node *postfix;
     node *index;
@@ -127,7 +130,7 @@ public:
         name(func_name),
         args(arglist) {
      }
-    ns_value eval() {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    ns_value eval(ns_rt_context *rtctx = NULL) {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
 public:
     node    *postfix;
     symbol  *name;
@@ -140,7 +143,7 @@ public:
     identifer_node(symbol *s) : node(IDENTIFIER_NODE), sym(s) {
         /* do nothing */
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     symbol *sym;
 };
@@ -151,7 +154,7 @@ public:
     int_node(int n) : node(NUM_INT_NODE), i(n) {
         /* do nothing */
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     int i;
 };
@@ -162,7 +165,7 @@ public:
     str_node(char *s) : node(STR_NODE), str(s) {
         /* do nothing */
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     char *str;
 };
@@ -185,7 +188,7 @@ public:
             action(act) {
         /* do nothing */
     }
-    ns_value eval(); 
+    ns_value eval(ns_rt_context *rtctx = NULL); 
 
 public:
     node *pattern;
@@ -196,7 +199,7 @@ typedef node_list<rule_node, node::RULE_LIST_NODE> rule_list_base;
 class rule_list_node : public rule_list_base {
 public:
     rule_list_node() : rule_list_base() {}
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 };
 
 
@@ -204,7 +207,7 @@ typedef node_list<node, node::STMT_LIST_NODE> stmt_list_base;
 class stmt_list_node : public stmt_list_base {
 public:
     stmt_list_node() : stmt_list_base() {}
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 };
 
 class assign_node : public node {
@@ -215,7 +218,7 @@ public:
              rvalue(val) {
         /* do nothing */
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 
 public:
     symbol *variable_name;
@@ -227,7 +230,7 @@ public:
     stmt_while_node(node *condition, stmt_list_node *stmt_list) 
         :node(STMT_WHILE_NODE), condition_exp(condition), stmts(stmt_list) {
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -246,7 +249,7 @@ public:
         stmts(action), else_stmts(else_action) {
      }
 
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     node *condition_exp;
     stmt_list_node *stmts;
@@ -258,7 +261,7 @@ public:
     stmt_for_in_node(symbol *tmp, symbol *ln, stmt_list_node *stmt_list)
         : node(STMT_FOR_IN_NODE), tmp_id(tmp), id(ln), stmts(stmt_list) {
     }
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     symbol  *tmp_id;
     symbol  *id; 
@@ -271,7 +274,7 @@ public:
         : node(OPERATOR_NODE), opt(opt), left(l), right(r) {
     }
     
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     char    opt; 
     node  *left;
@@ -284,7 +287,7 @@ public:
         : node(COMPARE_NODE), cmp_opt(opt), left(l), right(r) {
     }
 
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     int    cmp_opt; 
     node  *left;
@@ -301,7 +304,7 @@ public:
         /* do nothing */
     }
     
-    ns_value eval();
+    ns_value eval(ns_rt_context *rtctx = NULL);
 
 public:
     const char *func_name;
