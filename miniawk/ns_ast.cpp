@@ -49,6 +49,19 @@ ns_value assign_node::eval() {
     return variable_name->value;
 }
 
+ns_value assign_array_elem_node::eval() {
+    ns_value pv = postfix->eval();
+
+    if (pv.is_iteratale()) {
+        ns_value idx = index->eval();        
+        if (idx.is_int()) {
+            set_elem(pv, idx.int_val, rvalue->eval());  
+        }
+        return pv;
+    }
+    return ns_value(NSVAL_ILLEGAL);
+}
+
 ns_value builtin_func_node::eval() {
 
     if (strcmp(func_name, "print") == 0) {
@@ -175,6 +188,14 @@ ns_value array_ref_node::eval() {
     if (pv.is_iteratale()) {
         ns_value idx = index->eval();        
         if (idx.is_int()) {
+            return get_elem(pv, idx.int_val);            
         }
+        std::cerr 
+            << "index is not integer type." << std::endl;
     }
+    std::cerr
+            << "the object is not iteratable" << std::endl;
+
+    return ns_value(NSVAL_ILLEGAL);
 }
+

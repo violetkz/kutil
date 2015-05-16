@@ -11,19 +11,6 @@ bool ns_value::is_ref_count_type(ns_value_type t) {
    return (need_ref_count_bit_map | (1 << t)) ? true : false;
 }
 
-bool is_illegal_value() {
-    return (type == NSVAL_ILLEGAL) ? true : false;
-}
-
-bool ns_value::is_iteratale(){
-    return (type == NSVAL_LITERAL_STR 
-            || type == NSVAL_LIST) ?  true : false
-}
-
-bool ns_value::is_int() {
-    return (type == NSVAL_INTEGER) ? true : false;
-}
-
 ns_value::ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0) {
     switch (type) {
         case NSVAL_UNINITIALIZED:
@@ -127,12 +114,11 @@ ns_value &ns_value::operator = (const ns_value &s) {
     ref_count =  s.ref_count;
 
     add_ref(); //update new
-    if (s.type == NSVAL_LITERAL_STR) {
-        chr_val = s.chr_val;
-    }
+    if (s.type == NSVAL_LITERAL_STR) { chr_val = s.chr_val; }
     else if (type == NSVAL_INTEGER)  int_val = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
     else if (type == NSVAL_LIST)     list_val = s.list_val;
+    else { int_val = 0; }
     return *this;
 }
 
@@ -173,19 +159,22 @@ std::ostream &operator << (std::ostream &out, const ns_value &v) {
             out << v.int_val;
             break;
         case NSVAL_LITERAL_STR:
-            out << *v.chr_val;
+            out <<  *v.chr_val ;
             break;
         case NSVAL_BOOLEAN:
             out << v.bool_val;
             break;
         case NSVAL_LIST:
-                out << '[';
+            out << '[';
             if (v.list_val != NULL) {
                 std::copy(v.list_val->begin(),
                           v.list_val->end(), 
                           std::ostream_iterator<ns_value>(out, ","));
             }
-                out << ']';
+            out << ']';
+            break;
+        case NSVAL_CHAR:
+            //out << chr_val;
             break;
         default:
             out << "unkown type" << v.type;
@@ -200,6 +189,7 @@ ns_value operator+ (const ns_value &l, const ns_value &r) {
             return ns_value(l.int_val + r.int_val);
         }
         else if (l.type == NSVAL_LITERAL_STR) {
+            //XXX
             std::string tmp = *l.chr_val + *r.chr_val;
             return  ns_value(tmp.c_str());
         }
@@ -309,3 +299,29 @@ bool operator >= (const ns_value &l, const ns_value &r) {
     return operator== (l, r) || operator> (l, r);
 }
 
+
+ns_value get_elem(const ns_value &n, unsigned int index) {
+    if (n.type ==  NSVAL_LIST) {
+        std::list<ns_value>::iterator it = n.list_val->begin();
+        int i = 0;
+        for (i = 0; i<index && it != n.list_val->end(); ++it, ++i) {
+        }
+        if (i == index && it != n.list_val->end())
+            return *it;
+    }
+
+    return ns_value(NSVAL_ILLEGAL);
+}
+
+const ns_value& set_elem(const ns_value &n, unsigned int index, const ns_value& v) {
+    
+    if (n.type ==  NSVAL_LIST) {
+        std::list<ns_value>::iterator it = n.list_val->begin();
+        int i = 0;
+        for (i = 0; i<index && it != n.list_val->end(); ++it, ++i) {
+        }
+        if (i == index && it != n.list_val->end())
+            *it = v;
+    }
+    return n;
+}
