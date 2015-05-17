@@ -92,7 +92,7 @@ pattern: /* empty */ {$$ = NULL;}
     ;
 
 
-stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'  
+stmt:    FOR variable IN variable '{' stmt_list '}'  
                 { $$ = new stmt_for_in_node($2, $4, $6); }
         | WHILE '(' exp ')' '{' stmt_list '}'
                 { $$ = new stmt_while_node($3, $6); }
@@ -158,7 +158,7 @@ primary_exp:
     | NUM_INT           { $$ = new int_node($1);               }
     | '[' exp_list ']'  { $$ = new array_def_node($2);         }
     | func_exp          { $$ = $1; }
-    | variable
+    | variable          { $$ = $1; }
     ;
 
 variable: IDENTIFIER { $$ = new variable_node($1); }
@@ -201,7 +201,7 @@ def_func_exp: FUNC_DEF IDENTIFIER '(' identifier_list ')' '{' stmt_list '}'
     ;
 
 identifier_list:  /* empty */ { $$ = NULL; }
-    | IDENTIFIER           
+    | variable           
       {
         $$ = new identifier_list_node;
         //$$->append($1)
@@ -219,7 +219,7 @@ identifier_list:  /* empty */ { $$ = NULL; }
       }
     ;
 
-assign_exp: IDENTIFIER '=' exp  
+assign_exp: variable '=' exp  
     { $$ = new assign_node($1, $3);}
     ; 
 assign_array_elem_exp: primary_exp '[' exp ']' '=' exp     

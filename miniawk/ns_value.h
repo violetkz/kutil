@@ -31,7 +31,7 @@ public:
         int                     int_val;    /* value for integer or status */
         bool                    bool_val;   /* value for boolean */
         std::string             *chr_val;   /* value for string  */
-        node                    *node_val;  /* placeholder. not implemention. */
+        node                    *node_val;  /* runnable expression */
         std::list<ns_value>     *list_val;  /* value for array    */
     };
 
@@ -50,6 +50,8 @@ public:
     ns_value &operator = (const ns_value &s);
 
     operator bool();
+    
+    explicit ns_value(node *exp):type(NSVAL_EXPERESS_AST), node_val(exp) {}
 
     inline bool is_int() const {
         return (type == NSVAL_INTEGER); 

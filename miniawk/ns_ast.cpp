@@ -9,9 +9,17 @@
 
 extern void free_strval(char*);
 
+ns_value variable_node::set_value(ns_rt_context *rtctx, ns_value v) {
+    symbol *sym = check_symbol(id, rtctx);
+    if (!sym) { 
+        sym->value = v; 
+    }
+    return sym->value;
+}
+
 ns_value variable_node::eval(ns_rt_context *rtctx) {
-    symbol *syn = check_symbol(id, rtctx);
-    if (!s) { //xxx
+    symbol *sym = check_symbol(id, rtctx);
+    if (!sym) { //xxx
     }
     return sym->value;
 }
@@ -48,8 +56,8 @@ ns_value exp_list_node::eval(ns_rt_context *rtctx) {
 }
 
 ns_value assign_node::eval(ns_rt_context *rtctx) {
-    variable_name->value = rvalue->eval(rtctx);
-    return variable_name->value;
+    variable->set_value(rtctx, rvalue->eval(rtctx));
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 ns_value assign_array_elem_node::eval(ns_rt_context *rtctx) {
@@ -207,6 +215,8 @@ def_func_node::def_func_node(char *name, identifier_list_node *args, node *stmts
 }
 
 ns_value def_func_node::eval(ns_rt_context *rtctx) {
-    return ;
+    ns_rt_context local_env;        
+    
+    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 

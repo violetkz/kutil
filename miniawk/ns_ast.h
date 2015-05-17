@@ -55,6 +55,8 @@ public:
 class variable_node : public node {
 public:
     variable_node(char *s) : node(IDENTIFIER_NODE), id(s) {}
+    
+    ns_value set_value(ns_rt_context *rtctx, ns_value v);
     ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     //symbol *sym;
@@ -119,10 +121,8 @@ public:
 
 class def_func_node : public node {
 public:
-    def_func_node(char *name, identifier_list_node *args, node *stmts)
-        :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
-    }
-    ns_value eval(ns_rt_context *rtctx = NULL) {return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);}
+    def_func_node(char *name, identifier_list_node *args, node *stmts);
+    ns_value eval(ns_rt_context *rtctx = NULL);
 public:
     char                 *func_name;
     node                 *stmt_list;
@@ -215,14 +215,14 @@ class assign_node : public node {
 public:
     assign_node(variable_node *id, node *val)
             : node(ASSIGN_NODE),
-             variable_name(id), 
+             variable(id), 
              rvalue(val) {
         /* do nothing */
     }
     ns_value eval(ns_rt_context *rtctx = NULL);
 
 public:
-    variable_node *variable_name;
+    variable_node *variable;
     node *rvalue;
 };
 

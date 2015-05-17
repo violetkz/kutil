@@ -4,6 +4,9 @@
 #include "ns_value.h"
 #include "ns_rtctx.h"
 
+#include <map>
+#include <string>
+
 /* symbol info */
 struct symbol {
     std::string id;
@@ -15,6 +18,11 @@ struct symbol {
 /* symbol table */
 typedef std::map<std::string, symbol*> symtbl;
 typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
+
+struct ns_rt_context {
+    symtbl local_env;    
+};
+
 
 symbol *check_symbol(const std::string& name, ns_rt_context *rt);
 symbol *find_symbol(const std::string& name, ns_rt_context *rt);
