@@ -201,14 +201,14 @@ def_func_exp: FUNC_DEF IDENTIFIER '(' identifier_list ')' '{' stmt_list '}'
     ;
 
 identifier_list:  /* empty */ { $$ = NULL; }
-    | variable           
+    | IDENTIFIER           
       {
         $$ = new identifier_list_node;
         //$$->append($1)
         $$->push_back($1);
       }
 
-    | identifier_list ',' variable
+    | identifier_list ',' IDENTIFIER
       { 
         $$  = $1;
         if ($$ == NULL) {

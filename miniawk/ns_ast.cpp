@@ -84,8 +84,26 @@ ns_value builtin_func_node::eval(ns_rt_context *rtctx) {
         }
         std::cout << std::endl;
     }
+#if 0
+    else{
+        ns_value ns = find_symbol(func_name);
+        if (ns.type == NSVAL_EXPERESS_AST) {
+            node *func = ns.node_val;
+            if (func) {
+                //create a func run time environment.
+                ns_rt_context func_rt_ctx;  
+                //pass the paramter list
+                func_rt_ctx.set_params(plist);
+                //eval the func node under local env;
+                ns_value = func->eval(rtctx);
+                return ns_value;
+            }
+        }
+    }
+#endif
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
+
 
 ns_value stmt_if_node::eval(ns_rt_context *rtctx) {
     ns_value cond = condition_exp->eval(rtctx);
@@ -214,9 +232,25 @@ def_func_node::def_func_node(char *name, identifier_list_node *args, node *stmts
     :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
 }
 
-ns_value def_func_node::eval(ns_rt_context *rtctx) {
-    ns_rt_context local_env;        
+def_func_node::set_params(std::list<ns_value> *plist) {
     
+}
+
+ns_value def_func_node::eval(ns_rt_context *rtctx) {
+    
+#if 0
+    // push paramter stack
+    if (rtctx->func_param_list.size() == arg_list.size()) {
+        auto it = arg_list.begin();
+        auto pit = rtctx->func_param_list.begin();
+        for (; it != arg_list.end(); ++it, ++pit) {
+            symbol *s = check_symbol(*it, &rtctx->local); 
+            s->value = *pit; 
+        }
+    }
+    stmt_list->eval(rtctx);
+    
+#endif
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 

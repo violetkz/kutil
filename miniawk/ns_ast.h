@@ -110,7 +110,7 @@ private:
     std::list<T*> nlist;
 };
 
-typedef std::list<variable_node *> identifier_list_node;
+typedef std::list<const char *> identifier_list_node;
 
 typedef node_list<node, node::EXPLIST_NODE> explist_base;
 class exp_list_node : public  explist_base {
