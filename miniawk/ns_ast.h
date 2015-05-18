@@ -6,7 +6,7 @@
 #include <string>
 
 #include "ns_value.h"
-#include "ns_rtctx.h"
+#include "ns_symtbl.h"
 
 struct symbol;
 

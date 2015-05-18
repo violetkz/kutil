@@ -34,7 +34,7 @@ void yyerror(const char *fmt, ...);
 
 %token  AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE CMP_NE 
 %token  IF ELSE WHILE FUNC_DEF
-%token  MAIN
+%token  MAIN RETURN
 
 %token <strval> STR REGEXSTR  IDENTIFIER
 %token <fn>     BUILTIN_FUNC

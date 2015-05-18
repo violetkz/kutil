@@ -21,7 +21,7 @@ char *makebuffer(size_t n);
 "while" { return WHILE;}
 "main"  { return MAIN;}
 "def"   { return FUNC_DEF;}
-"return"{ return RETURN;}
+"return" { return RETURN;}
 
 "and"   { return AND; }
 "or"    { return OR;  }

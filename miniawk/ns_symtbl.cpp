@@ -2,12 +2,6 @@
 #include "ns_symtbl.h"
 
 class ns_symtbl {
-#if 0
-public:
-    /* symbol table */
-    typedef std::map<std::string, symbol*> symtbl;
-    typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
-#endif
 public:
     static symtbl *get_tbl() {
         if (tbl == NULL) {
@@ -31,8 +25,8 @@ symbol *check_symbol(const std::string& name, ns_rt_context *rt) {
 
     symtbl *tbl = NULL;
     
-    if (rt && rt->local_env) {
-        tbl = rt->local_env;
+    if (rt) {
+        tbl = &rt->local_env;
     }
     else {
         tbl = ns_symtbl::get_tbl();
@@ -56,14 +50,14 @@ symbol *check_symbol(const std::string& name, ns_rt_context *rt) {
 /* find a symbol from table by name and return pointer of symbol if existed
  * esle return NULL 
  */ 
-symbol *find_symbol(/* const char *name, */const std::string& name, ns_rt_context *rt) {
+symbol *find_symbol(const std::string& name, ns_rt_context *rt) {
     symbol *re = NULL;
 
     /* search local symbol table, firstly */
-    if (rt && rt->local_env) {
-        auto it = rt->local_env->find(name);
-        if (it != rt->local_env->end()) {
-            re = (*rt->local_env)[name]; 
+    if (rt) {
+        auto it = rt->local_env.find(name);
+        if (it != rt->local_env.end()) {
+            re = rt->local_env[name]; 
             return re;
         }
     }

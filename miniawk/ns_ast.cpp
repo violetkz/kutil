@@ -232,10 +232,6 @@ def_func_node::def_func_node(char *name, identifier_list_node *args, node *stmts
     :node(DEF_FUNC_NODE), func_name(name), arg_list(args), stmt_list(stmts) {
 }
 
-def_func_node::set_params(std::list<ns_value> *plist) {
-    
-}
-
 ns_value def_func_node::eval(ns_rt_context *rtctx) {
     
 #if 0
