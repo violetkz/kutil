@@ -1,0 +1,12 @@
+def s(a , b) {
+    if (a > b) {
+        return a+b;
+    }
+    else {
+        return b - a;
+    }
+}
+
+main {
+    print("add: ", s(1, 9));
+}
