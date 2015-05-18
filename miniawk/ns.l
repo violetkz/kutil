@@ -37,7 +37,12 @@ char *makebuffer(size_t n);
 "substr" |
 "split"  |
 "print"  |
-"getline"  {yylval.fn = strdup(yytext); return BUILTIN_FUNC;}
+"getline"  {
+    /* yylval.fn = strdup(yytext); return BUILTIN_FUNC;
+       */
+                yylval.strval = strdup(yytext);
+                return IDENTIFIER; 
+        }
 
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
 [A-Za-z_][A-Za-z0-9_]*  { 

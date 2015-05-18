@@ -37,7 +37,8 @@ public:
         ARRAY_REF_NODE,
         DEF_FUNC_NODE,
         DOT_CALL_METHOD_NODE,
-        ASSIGN_ARRAY_REF_NODE
+        ASSIGN_ARRAY_REF_NODE,
+        STMT_RETURN_NODE
     };
     
     node(int t) : type(t) {}
@@ -179,8 +180,6 @@ public:
     node    *args;
 };
 
-
-
 class rule_node : public node {
 public:
     rule_node(node *p, node *act) 
@@ -310,6 +309,14 @@ public:
 public:
     const char *func_name;
     exp_list_node *plist;
+};
+
+class stmt_return_node : public node {
+public:
+    stmt_return_node(node *exp);
+    ns_value eval(ns_rt_context *rtctx = NULL);
+private:
+    node *retval_exp;
 };
 
 #endif //~NS_DEF_H____

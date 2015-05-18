@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 
+
 enum ns_value_type {
     NSVAL_INTEGER       = 0, /* integer */
     NSVAL_LITERAL_STR   = 1, /* literal string */
@@ -51,7 +52,9 @@ public:
 
     operator bool();
     
-    explicit ns_value(node *exp):type(NSVAL_EXPERESS_AST), node_val(exp) {}
+    explicit ns_value(node *exp):type(NSVAL_EXPERESS_AST), node_val(exp) {
+        std::cout << "ns_value expression node:=>" << node_val << std::endl;
+    }
 
     inline bool is_int() const {
         return (type == NSVAL_INTEGER); 

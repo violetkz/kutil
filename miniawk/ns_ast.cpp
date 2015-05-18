@@ -3,6 +3,8 @@
 #include <cstring>
 #include <map>
 #include <string>
+#include <iostream>
+#include <iterator>
 #include "ns_ast.h"
 #include "ns_symtbl.h"
 #include "ns.tab.h"
@@ -11,7 +13,7 @@ extern void free_strval(char*);
 
 ns_value variable_node::set_value(ns_rt_context *rtctx, ns_value v) {
     symbol *sym = check_symbol(id, rtctx);
-    if (!sym) { 
+    if (sym) { 
         sym->value = v; 
     }
     return sym->value;
@@ -75,52 +77,63 @@ ns_value assign_array_elem_node::eval(ns_rt_context *rtctx) {
 
 ns_value builtin_func_node::eval(ns_rt_context *rtctx) {
 
+    // eval paramter list
+    std::list<ns_value> func_param_value_list;
+    exp_list_node::nl_iter it = plist->begin();
+    for(; it != plist->end(); ++it) {
+        func_param_value_list.push_back((*it)->eval(rtctx));
+    }
+
     if (strcmp(func_name, "print") == 0) {
 
-        exp_list_node::nl_iter it = plist->begin();
-
-        for(; it != plist->end(); ++it) {
-            std::cout << (*it)->eval(rtctx);
-        }
+        std::copy(func_param_value_list.begin(), func_param_value_list.end(), 
+                  std::ostream_iterator<ns_value> (std::cout));
         std::cout << std::endl;
     }
-#if 0
     else{
-        ns_value ns = find_symbol(func_name);
-        if (ns.type == NSVAL_EXPERESS_AST) {
-            node *func = ns.node_val;
-            if (func) {
-                //create a func run time environment.
-                ns_rt_context func_rt_ctx;  
-                //pass the paramter list
-                func_rt_ctx.set_params(plist);
-                //eval the func node under local env;
-                ns_value = func->eval(rtctx);
-                return ns_value;
+        symbol *s = find_symbol(func_name, rtctx);
+        if (s) {
+            ns_value ns =  s->value;
+            if (ns.type == NSVAL_EXPERESS_AST) {
+                node *func = ns.node_val;
+                if (func) {
+                    //create a func run time environment.
+                    ns_rt_context func_rt_ctx;  
+                    //pass the paramter list
+                    func_rt_ctx.func_param_list = &func_param_value_list;
+                    //eval the func node under local env;
+                    ns_value v = func->eval(&func_rt_ctx);
+                    return v;
+                }
             }
         }
+        else {
+            std::cerr << "can't find the symbol: " << func_name << std::endl;
+            return ns_value(NSVAL_ILLEGAL);
+        }
     }
-#endif
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
 
 
 ns_value stmt_if_node::eval(ns_rt_context *rtctx) {
+    ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
     ns_value cond = condition_exp->eval(rtctx);
     if (cond) {
-        stmts->eval(rtctx);
+        retval = stmts->eval(rtctx);
     }
     else if (else_stmts != NULL) {
-        else_stmts->eval(rtctx);
+        retval = else_stmts->eval(rtctx);
     }
-    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
+    return retval;
 }
 
 ns_value stmt_while_node::eval(ns_rt_context *rtctx) {
+    ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
     while (condition_exp->eval(rtctx)) {
-        stmts->eval(rtctx);
+        retval = stmts->eval(rtctx);
     }
-    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
+    return retval;
 }
 
 ns_value stmt_for_in_node::eval(ns_rt_context *rtctx) {
@@ -194,7 +207,18 @@ ns_value stmt_list_node::eval(ns_rt_context *rtctx) {
 
     nl_iter it = begin();
     for (;it != end(); ++it) {
-        (*it)->eval(rtctx);
+        node *n = *it;
+        if (n->type == STMT_RETURN_NODE) {
+            puts("return node");
+            ns_value retval = n->eval(rtctx);
+            return retval;
+        }
+        else {
+            ns_value val = n->eval(rtctx);
+            if (val.is_illegal_value()) {
+                return val;
+            }
+        }
     }
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
 }
@@ -234,19 +258,30 @@ def_func_node::def_func_node(char *name, identifier_list_node *args, node *stmts
 
 ns_value def_func_node::eval(ns_rt_context *rtctx) {
     
-#if 0
     // push paramter stack
-    if (rtctx->func_param_list.size() == arg_list.size()) {
-        auto it = arg_list.begin();
-        auto pit = rtctx->func_param_list.begin();
-        for (; it != arg_list.end(); ++it, ++pit) {
-            symbol *s = check_symbol(*it, &rtctx->local); 
+    if (rtctx->func_param_list->size() == arg_list->size()) {
+        auto it = arg_list->begin();
+        auto pit = rtctx->func_param_list->begin();
+        for (; it != arg_list->end(); ++it, ++pit) {
+            symbol *s = check_symbol(*it, rtctx); 
             s->value = *pit; 
         }
     }
-    stmt_list->eval(rtctx);
-    
-#endif
-    return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
+    ns_value val = stmt_list->eval(rtctx);
+    return val;
 }
 
+/** 
+ * class stmt_return_node 
+ */
+
+stmt_return_node::stmt_return_node(node *exp) : node(STMT_RETURN_NODE), retval_exp(exp) {
+}
+
+ns_value stmt_return_node::eval(ns_rt_context *rtctx) {
+    ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
+    if (retval_exp) {
+        retval = retval_exp->eval(rtctx); 
+    }
+    return retval;
+}
