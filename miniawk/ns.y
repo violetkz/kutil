@@ -35,14 +35,14 @@ void yyerror(const char *fmt, ...);
 
 %token  AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE CMP_NE 
 %token  IF ELSE WHILE FUNC_DEF
-%token  MAIN RETURN
+%token  MAIN RETURN BREAK CONTINUE
 
 %token <strval> STR REGEXSTR  IDENTIFIER
 %token <fn>     BUILTIN_FUNC
 %token <intval> NUM_INT
 
 %type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp 
-             array_ref return_exp
+             array_ref return_exp 
 %type <ast_func>    func_exp  
 %type <ast_def_func> def_func_exp 
 %type <ast_assign>  assign_exp 
@@ -55,6 +55,7 @@ void yyerror(const char *fmt, ...);
 %type <ast_assign_array_elem> assign_array_elem_exp
 %type <ast_variable> variable
 %type <ast_return_node>  stmt_return_exp
+
 
 /* Lowest to highest */
 %right '='
@@ -90,6 +91,7 @@ main: MAIN '{' stmt_list '}' { if ($3 != NULL) $3->eval(); }
 def_func_list:  /* empty */
     | def_func_list def_func_exp 
  
+
 rule_list: /* empty */ { $$ = NULL; } 
     | rule_list rule   { 
                             $$ = $1;
@@ -118,10 +120,8 @@ stmt:    FOR variable IN variable '{' stmt_list '}'
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6, $10); }
         | exp ';'           { $$ = $1; }
-        /*
-        | BREAK ';'
-        | CONTINUE ';'
-        */
+        | BREAK ';'     { $$ = new stmt_break_node; }
+        | CONTINUE ';'  { $$ = new stmt_continue_node; }
         ;
 
 stmt_list: /* empty */    { $$ = NULL; }
