@@ -102,8 +102,11 @@ ns_value builtin_func_node::eval(ns_rt_context *rtctx) {
                     //pass the paramter list
                     func_rt_ctx.func_param_list = &func_param_value_list;
                     //eval the func node under local env;
-                    ns_value v = func->eval(&func_rt_ctx);
-                    return v;
+                    ns_value func_status = func->eval(&func_rt_ctx);
+                    if (func_status.is_status_return()) {
+                        return func_rt_ctx.func_return_val; 
+                    }
+                    return func_status;
                 }
             }
         }
@@ -125,6 +128,7 @@ ns_value stmt_if_node::eval(ns_rt_context *rtctx) {
     else if (else_stmts != NULL) {
         retval = else_stmts->eval(rtctx);
     }
+
     return retval;
 }
 
@@ -132,6 +136,8 @@ ns_value stmt_while_node::eval(ns_rt_context *rtctx) {
     ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
     while (condition_exp->eval(rtctx)) {
         retval = stmts->eval(rtctx);
+        if (! retval.is_status_ok()) 
+            break;
     }
     return retval;
 }
@@ -208,16 +214,12 @@ ns_value stmt_list_node::eval(ns_rt_context *rtctx) {
     nl_iter it = begin();
     for (;it != end(); ++it) {
         node *n = *it;
-        if (n->type == STMT_RETURN_NODE) {
-            puts("return node");
-            ns_value retval = n->eval(rtctx);
-            return retval;
-        }
-        else {
-            ns_value val = n->eval(rtctx);
-            if (val.is_illegal_value()) {
-                return val;
-            }
+        ns_value val = n->eval(rtctx);
+        if (val.is_status_break() 
+            || val.is_status_continue()
+            || val.is_status_return()
+            || val.is_illegal_value()) {
+            return val;
         }
     }
     return ns_value(NSVAL_STATUS, NSVAL_STATUS_OK);
@@ -274,14 +276,13 @@ ns_value def_func_node::eval(ns_rt_context *rtctx) {
 /** 
  * class stmt_return_node 
  */
-
 stmt_return_node::stmt_return_node(node *exp) : node(STMT_RETURN_NODE), retval_exp(exp) {
 }
 
 ns_value stmt_return_node::eval(ns_rt_context *rtctx) {
-    ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
+    ns_value retval(NSVAL_STATUS, NSVAL_STATUS_RETURN);
     if (retval_exp) {
-        retval = retval_exp->eval(rtctx); 
+        rtctx->func_return_val = retval_exp->eval(rtctx); 
     }
     return retval;
 }

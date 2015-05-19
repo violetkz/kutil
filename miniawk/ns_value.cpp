@@ -101,10 +101,15 @@ ns_value::ns_value(const ns_value &s)
         chr_val  = s.chr_val;
     }
     else if (type == NSVAL_INTEGER)  int_val  = s.int_val;
+    else if (type == NSVAL_STATUS)   int_val  = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
     else if (type == NSVAL_LIST)     list_val = s.list_val;
     else if (type == NSVAL_EXPERESS_AST) node_val = s.node_val;
-    else  int_val = 0;
+    else {
+        std::cerr << "Warning! the constractor can't handle un-defined type" 
+                << std::endl;
+        int_val = 0;
+    }
 }
 
 ns_value &ns_value::operator = (const ns_value &s) {
@@ -119,10 +124,15 @@ ns_value &ns_value::operator = (const ns_value &s) {
     add_ref(); //update new
     if (s.type == NSVAL_LITERAL_STR) { chr_val = s.chr_val; }
     else if (type == NSVAL_INTEGER)  int_val = s.int_val;
+    else if (type == NSVAL_STATUS)   int_val  = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
     else if (type == NSVAL_LIST)     list_val = s.list_val;
     else if (type == NSVAL_EXPERESS_AST) node_val = s.node_val;
-    else { int_val = 0; }
+    else {
+        std::cerr << "Warning! the constractor can't handle un-defined type" 
+                << std::endl;
+        int_val = 0;
+    }
     return *this;
 }
 

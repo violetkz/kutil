@@ -8,6 +8,7 @@ def s(a , b) {
     }
 }
 def fn (n) {
+    print (n);
     if (n == 0 or n == 1) {
         print ("n is 0/1");
         return n;
@@ -19,6 +20,6 @@ main {
     print("func test");
     ##print("fn(9):", fn(9));
     print("add: ", s(1, 9));
-    ##print("fn(1):", fn(1));
-
+    print("fn(1):", fn(1));
+    print("fn(2):", fn(2));
 }

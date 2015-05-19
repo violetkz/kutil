@@ -22,6 +22,7 @@ typedef std::map<std::string, symbol*>::iterator symtbl_iterator;
 struct ns_rt_context {
     symtbl local_env;    
     std::list<ns_value> *func_param_list;
+    ns_value             func_return_val;
 };
 
 symbol *check_symbol(const std::string& name, ns_rt_context *rt);
