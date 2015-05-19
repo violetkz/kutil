@@ -2,7 +2,6 @@
 #define ns_symtbl_hpp__
 
 #include "ns_value.h"
-#include "ns_rtctx.h"
 
 #include <map>
 #include <string>
