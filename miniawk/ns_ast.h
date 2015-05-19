@@ -324,7 +324,7 @@ private:
 class stmt_break_node : public node {
 public:
     stmt_break_node():node(STMT_BREAK_NODE) {}
-    ns_value eval() {
+    ns_value eval(ns_rt_context *rtctx = NULL) {
         return ns_value(NSVAL_STATUS, NSVAL_STATUS_BREAK);
     };
 };
@@ -332,7 +332,7 @@ public:
 class stmt_continue_node : public node {
 public:
     stmt_continue_node():node(STMT_CONTINUE_NODE) {}
-    ns_value eval() {
+    ns_value eval(ns_rt_context *rtctx = NULL) {
         return ns_value(NSVAL_STATUS, NSVAL_STATUS_CONTINUE);
     };
 };
