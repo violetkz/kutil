@@ -13,7 +13,6 @@ void yyerror(const char *fmt, ...);
     char *strval;
     int   intval;
     char *fn;
-    symbol          *sym;
     node            *ast;
     builtin_func_node   *ast_func;
     def_func_node       *ast_def_func;
@@ -28,21 +27,22 @@ void yyerror(const char *fmt, ...);
     stmt_for_in_node    *ast_stmt_if_in;
     array_def_node      *ast_array_def;
     array_ref_node      *ast_array_ref;
+    variable_node       *ast_variable;
     identifier_list_node      *ast_identifier_list;
     dot_call_method_node      *ast_dot_call_method;
+    stmt_return_node          *ast_return_node;
 };
 
 %token  AND OR FOR IN CMP_GT CMP_LS CMP_EQ CMP_LE CMP_GE CMP_NE 
 %token  IF ELSE WHILE FUNC_DEF
-%token  MAIN
+%token  MAIN RETURN BREAK CONTINUE
 
-%token <strval> STR REGEXSTR
+%token <strval> STR REGEXSTR  IDENTIFIER
 %token <fn>     BUILTIN_FUNC
-%token <sym>    IDENTIFIER
 %token <intval> NUM_INT
 
 %type <ast>  pattern stmt exp binary_operator_exp binary_compare_exp primary_exp 
-             array_ref 
+             array_ref return_exp 
 %type <ast_func>    func_exp  
 %type <ast_def_func> def_func_exp 
 %type <ast_assign>  assign_exp 
@@ -52,7 +52,10 @@ void yyerror(const char *fmt, ...);
 %type <ast_stmt_list>  stmt_list
 %type <ast_identifier_list> identifier_list
 %type <ast_dot_call_method> dot_call_method_exp
-%type <ast_assign_array_elem> assign_array_elem_exp;
+%type <ast_assign_array_elem> assign_array_elem_exp
+%type <ast_variable> variable
+%type <ast_return_node>  stmt_return_exp
+
 
 /* Lowest to highest */
 %right '='
@@ -63,6 +66,10 @@ void yyerror(const char *fmt, ...);
 
 %start start
 %%
+start: program
+     ;
+
+/*
 start: rule_list { if ($1 != NULL) {
                     $1->eval();
                     }
@@ -71,8 +78,20 @@ start: rule_list { if ($1 != NULL) {
                 { 
                 if ($3 != NULL) $3->eval();
                 }
+
     ;
+*/
+
+program: def_func_list main
+    ;
+
+main: MAIN '{' stmt_list '}' { if ($3 != NULL) $3->eval(); }
+    ;
+
+def_func_list:  /* empty */
+    | def_func_list def_func_exp 
  
+
 rule_list: /* empty */ { $$ = NULL; } 
     | rule_list rule   { 
                             $$ = $1;
@@ -92,7 +111,7 @@ pattern: /* empty */ {$$ = NULL;}
     ;
 
 
-stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'  
+stmt:    FOR variable IN variable '{' stmt_list '}'  
                 { $$ = new stmt_for_in_node($2, $4, $6); }
         | WHILE '(' exp ')' '{' stmt_list '}'
                 { $$ = new stmt_while_node($3, $6); }
@@ -100,12 +119,9 @@ stmt:    FOR IDENTIFIER IN IDENTIFIER '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6); }
         | IF '(' exp ')' '{' stmt_list '}' ELSE '{' stmt_list '}'
                 { $$ = new stmt_if_node($3, $6, $10); }
-        | def_func_exp      { $$ = $1; }
         | exp ';'           { $$ = $1; }
-        /*
-        | BREAK ';'
-        | CONTINUE ';'
-        */
+        | BREAK ';'     { $$ = new stmt_break_node; }
+        | CONTINUE ';'  { $$ = new stmt_continue_node; }
         ;
 
 stmt_list: /* empty */    { $$ = NULL; }
@@ -127,6 +143,7 @@ exp: binary_operator_exp
    | assign_array_elem_exp {$$ = $1;}
    | array_ref  {$$ = $1;}       
    | dot_call_method_exp {$$=$1;}
+   | stmt_return_exp { $$ = $1; }
    ;
 
 /* +, -, *, /, operator */
@@ -152,13 +169,15 @@ binary_compare_exp:
     
 primary_exp:
      '(' exp ')'        { $$ = $2; }
-    | IDENTIFIER        { $$ = new identifer_node($1);         }
     | STR               { $$ = new str_node($1);               }
     | REGEXSTR          { $$ = new regex_str_node($1);         }
     | NUM_INT           { $$ = new int_node($1);               }
     | '[' exp_list ']'  { $$ = new array_def_node($2);         }
     | func_exp          { $$ = $1; }
+    | variable          { $$ = $1; }
     ;
+
+variable: IDENTIFIER { $$ = new variable_node($1); }
 
 array_ref:
     primary_exp '[' exp ']' { $$ = new array_ref_node($1, $3);}
@@ -189,12 +208,21 @@ exp_list: /* empty */ {$$ = NULL;}
                     }
     ;
 
-func_exp: BUILTIN_FUNC '(' exp_list ')' 
+/* func_exp: BUILTIN_FUNC '(' exp_list ')'  */
+func_exp: IDENTIFIER '(' exp_list ')'
         { $$ = new builtin_func_node($1, $3); }
     ;
 
 def_func_exp: FUNC_DEF IDENTIFIER '(' identifier_list ')' '{' stmt_list '}'
-        { $$ = new def_func_node($2, $4, $7); }
+       { 
+            def_func_node *n = new def_func_node($2, $4, $7); 
+            symbol *s = check_symbol($2, NULL);
+            if (s) {
+                s->value = ns_value(n);
+            }
+
+            $$ = n; 
+        }
     ;
 
 identifier_list:  /* empty */ { $$ = NULL; }
@@ -216,12 +244,21 @@ identifier_list:  /* empty */ { $$ = NULL; }
       }
     ;
 
-assign_exp: IDENTIFIER '=' exp  
+assign_exp: variable '=' exp  
     { $$ = new assign_node($1, $3);}
     ; 
+
 assign_array_elem_exp: primary_exp '[' exp ']' '=' exp     
     { $$ = new assign_array_elem_node($1,$3,$6); }
     ;
+
+return_exp: /* empty */ { $$ = NULL; }
+          | exp         { $$ = $1;   }
+          ;
+
+stmt_return_exp: RETURN return_exp { $$ = new stmt_return_node($2); }
+               ;
+
 %%
 
 void yyerror(const char *fmt, ...){

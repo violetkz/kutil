@@ -21,6 +21,9 @@ char *makebuffer(size_t n);
 "while" { return WHILE;}
 "main"  { return MAIN;}
 "def"   { return FUNC_DEF;}
+"return" { return RETURN;}
+"break"  { return BREAK;}
+"continue" {return CONTINUE;}
 
 "and"   { return AND; }
 "or"    { return OR;  }
@@ -36,12 +39,17 @@ char *makebuffer(size_t n);
 "substr" |
 "split"  |
 "print"  |
-"getline"  {yylval.fn = strdup(yytext); return BUILTIN_FUNC;}
+"getline"  {
+    /* yylval.fn = strdup(yytext); return BUILTIN_FUNC;
+       */
+                yylval.strval = strdup(yytext);
+                return IDENTIFIER; 
+        }
 
 [0-9]+     {yylval.intval = atoi(yytext); return NUM_INT;}
 [A-Za-z_][A-Za-z0-9_]*  { 
-                yylval.sym = install_symbol(yytext);
-                /* yylval.strval = yytext;  */
+                /* yylval.sym = check_symbol(yytext);  */
+                yylval.strval = strdup(yytext);
                 return IDENTIFIER; 
                }
 r{0,1}\"[^"]*\" { 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 
+
 enum ns_value_type {
     NSVAL_INTEGER       = 0, /* integer */
     NSVAL_LITERAL_STR   = 1, /* literal string */
@@ -18,7 +19,10 @@ enum ns_value_type {
 
 enum ns_status_type {
     NSVAL_STATUS_OK, 
-    NSVAL_STATUS_FAILED
+    NSVAL_STATUS_FAILED,
+    NSVAL_STATUS_RETURN,  
+    NSVAL_STATUS_BREAK,
+    NSVAL_STATUS_CONTINUE
 };
 
 struct node; //previous declaration
@@ -31,7 +35,7 @@ public:
         int                     int_val;    /* value for integer or status */
         bool                    bool_val;   /* value for boolean */
         std::string             *chr_val;   /* value for string  */
-        node                    *node_val;  /* placeholder. not implemention. */
+        node                    *node_val;  /* runnable expression */
         std::list<ns_value>     *list_val;  /* value for array    */
     };
 
@@ -50,6 +54,8 @@ public:
     ns_value &operator = (const ns_value &s);
 
     operator bool();
+    
+    explicit ns_value(node *exp):type(NSVAL_EXPERESS_AST), node_val(exp) {}
 
     inline bool is_int() const {
         return (type == NSVAL_INTEGER); 
@@ -61,6 +67,24 @@ public:
 
     inline bool is_iteratale() const { 
         return (type == NSVAL_LITERAL_STR || type == NSVAL_LIST); 
+    }
+
+    inline bool is_status_return() const {
+        return type == NSVAL_STATUS && int_val == NSVAL_STATUS_RETURN;
+    }
+
+    inline bool is_status_break() const {
+        return type == NSVAL_STATUS && int_val == NSVAL_STATUS_BREAK;
+    }
+
+    inline bool is_status_continue() const {
+        return type == NSVAL_STATUS && int_val == NSVAL_STATUS_CONTINUE;
+    }
+
+    inline bool is_status_ok() const {
+        return  (type == NSVAL_STATUS && int_val == NSVAL_STATUS_OK) 
+                || (type != NSVAL_ILLEGAL) 
+                || (type != NSVAL_UNINITIALIZED);
     }
 
 private:

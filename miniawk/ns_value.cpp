@@ -4,11 +4,13 @@
 #include <algorithm>
 
 const int ns_value::need_ref_count_bit_map =
-          (1 << NSVAL_LITERAL_STR) 
+        0
+        | (1 << NSVAL_LITERAL_STR) 
         | (1 << NSVAL_LIST);
 
 bool ns_value::is_ref_count_type(ns_value_type t) {
-   return (need_ref_count_bit_map | (1 << t)) ? true : false;
+   bool v = (need_ref_count_bit_map & (1 << t)) ? true : false;
+   return v;
 }
 
 ns_value::ns_value(ns_value_type t) : type(t), int_val(0), ref_count(0) {
@@ -99,9 +101,15 @@ ns_value::ns_value(const ns_value &s)
         chr_val  = s.chr_val;
     }
     else if (type == NSVAL_INTEGER)  int_val  = s.int_val;
+    else if (type == NSVAL_STATUS)   int_val  = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
     else if (type == NSVAL_LIST)     list_val = s.list_val;
-    else  int_val = 0;
+    else if (type == NSVAL_EXPERESS_AST) node_val = s.node_val;
+    else {
+        std::cerr << "Warning! the constractor can't handle un-defined type" 
+                << std::endl;
+        int_val = 0;
+    }
 }
 
 ns_value &ns_value::operator = (const ns_value &s) {
@@ -116,9 +124,15 @@ ns_value &ns_value::operator = (const ns_value &s) {
     add_ref(); //update new
     if (s.type == NSVAL_LITERAL_STR) { chr_val = s.chr_val; }
     else if (type == NSVAL_INTEGER)  int_val = s.int_val;
+    else if (type == NSVAL_STATUS)   int_val  = s.int_val;
     else if (type == NSVAL_BOOLEAN)  bool_val = s.bool_val;
     else if (type == NSVAL_LIST)     list_val = s.list_val;
-    else { int_val = 0; }
+    else if (type == NSVAL_EXPERESS_AST) node_val = s.node_val;
+    else {
+        std::cerr << "Warning! the constractor can't handle un-defined type" 
+                << std::endl;
+        int_val = 0;
+    }
     return *this;
 }
 
@@ -175,6 +189,9 @@ std::ostream &operator << (std::ostream &out, const ns_value &v) {
             break;
         case NSVAL_CHAR:
             //out << chr_val;
+            break;
+        case NSVAL_EXPERESS_AST:
+            out << "expression: " << v.node_val;
             break;
         default:
             out << "unkown type" << v.type;
