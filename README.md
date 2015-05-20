@@ -3,19 +3,19 @@ Kutil
 
 some dirty code just for learning or practise.
 
-config
+* config
 ------
 a simple config file parser written by Cpp.
 
-net
+* net
 ----
 the code to study boost.asio lib
 
-miniawk
+* miniawk
 ------
-This is a mininal program langague which created by flex/bsion/CPP.
+This is a minimal program language which created by flex/bsion/CPP.
 Just for Fun
 
 *Note:*
-the latest src code have been moved to repository 'minlnag'. 
+the latest SRC code have been moved to repository 'minlang'. 
 
