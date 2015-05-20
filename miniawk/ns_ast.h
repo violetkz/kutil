@@ -19,26 +19,28 @@ public:
         FUNC_PARAM_LIST_NODE,
         FUNC_PARAM_NODE,
         FUNC_NODE,
+        DEF_FUNC_NODE,
+        DOT_CALL_METHOD_NODE,
+        ASSIGN_NODE, 
+        ASSIGN_ARRAY_REF_NODE,
         STR_NODE,
         REGEX_STR_NODE,
-        ASSIGN_NODE, 
         EXP_NODE, 
         EXPLIST_NODE,
         IDENTIFIER_NODE,
         IDENTIFIER_LIST_NODE,
         NUM_INT_NODE,
-        STMT_WHILE_NODE,
-        STMT_IF_NODE,
-        STMT_LIST_NODE,
-        STMT_FOR_IN_NODE,
         OPERATOR_NODE,
         COMPARE_NODE,
         ARRAY_DEF_NODE,
         ARRAY_REF_NODE,
-        DEF_FUNC_NODE,
-        DOT_CALL_METHOD_NODE,
-        ASSIGN_ARRAY_REF_NODE,
-        STMT_RETURN_NODE
+        STMT_RETURN_NODE,
+        STMT_WHILE_NODE,
+        STMT_IF_NODE,
+        STMT_LIST_NODE,
+        STMT_FOR_IN_NODE,
+        STMT_BREAK_NODE,
+        STMT_CONTINUE_NODE
     };
     
     node(int t) : type(t) {}
@@ -317,6 +319,22 @@ public:
     ns_value eval(ns_rt_context *rtctx = NULL);
 private:
     node *retval_exp;
+};
+
+class stmt_break_node : public node {
+public:
+    stmt_break_node():node(STMT_BREAK_NODE) {}
+    ns_value eval(ns_rt_context *rtctx = NULL) {
+        return ns_value(NSVAL_STATUS, NSVAL_STATUS_BREAK);
+    };
+};
+
+class stmt_continue_node : public node {
+public:
+    stmt_continue_node():node(STMT_CONTINUE_NODE) {}
+    ns_value eval(ns_rt_context *rtctx = NULL) {
+        return ns_value(NSVAL_STATUS, NSVAL_STATUS_CONTINUE);
+    };
 };
 
 #endif //~NS_DEF_H____

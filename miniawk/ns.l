@@ -22,6 +22,8 @@ char *makebuffer(size_t n);
 "main"  { return MAIN;}
 "def"   { return FUNC_DEF;}
 "return" { return RETURN;}
+"break"  { return BREAK;}
+"continue" {return CONTINUE;}
 
 "and"   { return AND; }
 "or"    { return OR;  }

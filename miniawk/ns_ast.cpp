@@ -136,8 +136,11 @@ ns_value stmt_while_node::eval(ns_rt_context *rtctx) {
     ns_value retval(NSVAL_STATUS, NSVAL_STATUS_OK);
     while (condition_exp->eval(rtctx)) {
         retval = stmts->eval(rtctx);
-        if (! retval.is_status_ok()) 
+        if (retval.is_status_break() || retval.is_illegal_value()) 
             break;
+        else if (retval.is_status_continue()) {
+            continue;
+        }
     }
     return retval;
 }

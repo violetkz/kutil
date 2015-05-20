@@ -16,10 +16,9 @@ def fn (n) {
 }
 
 main {
-      print("func test");
-      print("fn(3):", fn(3));
-      print("fn(10):", fn(10));
-##    print("add: ", s(1, 9));
-##    print("fn(1):", fn(1));
-      
+    print("func test");
+    ##print("fn(9):", fn(9));
+    print("add: ", s(1, 9));
+    print("fn(1):", fn(1));
+    print("fn(2):", fn(20));
 }
