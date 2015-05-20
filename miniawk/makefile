@@ -1,4 +1,4 @@
-CPPFLAGS=-g -std=c++11 
+CPPFLAGS=-g -std=gnu++11 
 CPP=g++
 
 all: ns
@@ -23,7 +23,8 @@ ns.tab.o:ns.y
 
 ns_lex.o:ns.l
 	flex -o ns_lex.cpp ns.l
-	g++ ${CPPFLAGS} -Wno-deprecated-register -c -o ns_lex.o ns_lex.cpp
+	#g++ ${CPPFLAGS} -Wno-deprecated-register -c -o ns_lex.o ns_lex.cpp
+	g++ ${CPPFLAGS}  -c -o ns_lex.o ns_lex.cpp
 
 ns_symtbl.o:ns_symtbl.h ns_symtbl.cpp
 	g++ ${CPPFLAGS} -c -o ns_symtbl.o ns_symtbl.cpp
