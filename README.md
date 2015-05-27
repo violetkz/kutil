@@ -8,4 +8,5 @@ Some code file for study or practise.
     + `netdev_util.h`:  enable/disable/setup the network devices
     + `netdev_info.h`:  get the network devices information
 3. __miniawk__: The prototype of a minimal program language.
+4. __crest__: The prototype of a restful service written by libevent2.
 
